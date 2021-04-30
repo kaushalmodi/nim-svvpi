@@ -1,0 +1,16 @@
+#+title: Wrapper for SystemVerilog VPI headers sv_vpi_user.h and vpi_user.h
+
+* Installation
+#+begin_example
+nimble install https://github.com/kaushalmodi/nim-svvpi
+#+end_example
+** How to get ~nimble~?
+Get Nim installation (which includes ~nimble~) from
+https://nim-lang.org/install.html.
+* Requirements
+User needs to have access to some SystemVerilog simulator supporting
+VPI, like Cadence Xcelium.
+* Versions tested
+- Cadence Xcelium :: 20.09-s09
+- OS :: CentOS 7.6
+- Nim :: 1.5.1 as of 2021-04-30 Fri.
