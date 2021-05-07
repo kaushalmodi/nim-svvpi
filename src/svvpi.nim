@@ -82,7 +82,9 @@ macro vpiDefineTask*(procSym, body: untyped) =
       # Below proc needs to have the signature "proc (a1: cstring): cint
       # {.cdecl.}"  as that's what nimterop auto-parses the
       # `t_vpi_systf_data.calltf` type to.
-      proc `intProcSym`(s: cstring): cint {.cdecl.} =
+      proc `intProcSym`(userData: cstring): cint {.cdecl.} =
+        let
+          userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
         `body`
 
       var
