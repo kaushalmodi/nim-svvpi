@@ -65,7 +65,7 @@ template setVlogStartupRoutines*(procArray: varargs[proc() {.nimcall.}]) =
     vlog_startup_routines[i] = procArray[i]
   vlog_startup_routines[numProcs] = nil
 
-macro vpiRegisterTask*(procSym, body: untyped) =
+macro vpiDefineTask*(procSym, body: untyped) =
   let
     procName = $procSym.basename # https://forum.nim-lang.org/t/7947#50608
   if procName.len <= 1:
