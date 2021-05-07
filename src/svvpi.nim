@@ -56,6 +56,9 @@ cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
 template setVlogStartupRoutines*(procArray: varargs[proc() {.nimcall.}]) =
   const
     numProcs = procArray.len
+  # The `vlog_startup_routines` identifier below is special and needs to match
+  # exactly to match this declaration in vpi_user,h:
+  #   PLI_VEXTERN PLI_DLLESPEC void (*vlog_startup_routines[]) ();
   var vlog_startup_routines {.inject, exportc, dynlib.}: array[numProcs + 1, proc() {.nimcall.}]
   for i in 0 ..< numProcs:
     vlog_startup_routines[i] = procArray[i]
