@@ -50,3 +50,13 @@ cOverride:
     vpiInterfaceDecl* = vpiVirtualInterfaceVar
 
 cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
+
+# https://forum.nim-lang.org/t/7945#50584
+# User code must call this template at global scope, and only once!
+template setVlogStartupRoutines*(procArray: varargs[proc() {.nimcall.}]) =
+  const
+    numProcs = procArray.len
+  var vlog_startup_routines {.inject, exportc, dynlib.}: array[numProcs + 1, proc() {.nimcall.}]
+  for i in 0 ..< numProcs:
+    vlog_startup_routines[i] = procArray[i]
+  vlog_startup_routines[numProcs] = nil

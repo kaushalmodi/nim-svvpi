@@ -971,7 +971,11 @@ XXTERN vpiHandle  vpi_handle_by_multi_index PROTO_PARAMS ( (vpiHandle obj,
 
 /****************************** GLOBAL VARIABLES ******************************/
 
-PLI_VEXTERN PLI_DLLESPEC void (*vlog_startup_routines[]) ();
+// Fri May 07 08:43:08 EDT 2021 - kmodi
+// Below declaration is commented out because nimterop cannot parse it.
+// https://github.com/nimterop/nimterop/issues/275
+// /* https://cdecl.org/?q=void+%28*vlog_startup_routines%5B%5D%29+%28%29 */
+// PLI_VEXTERN PLI_DLLESPEC void (*vlog_startup_routines[]) ();
 
 /* array of function pointers, last pointer should be null */
 
