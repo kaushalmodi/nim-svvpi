@@ -67,27 +67,28 @@ template setVlogStartupRoutines*(procArray: varargs[proc() {.nimcall.}]) =
 
 macro vpiRegisterTask*(procSym, body: untyped) =
   let
-    procName = $procSym.baseName # https://forum.nim-lang.org/t/7947#50608
+    procName = $procSym.basename # https://forum.nim-lang.org/t/7947#50608
   if procName.len <= 1:
-    echo "[Error] The proc sym needs to be at least 2 chars long."
+    echo "[Error] The proc name needs to be at least 2 chars long."
     quit QuitFailure
 
   let
-    # procSym = foo -> wrapperProcSym = dollarFoo
-    wrapperProcSym = ident("dollar" & procName[0].toUpperAscii() & procName[1 .. procName.high])
+    # procName = "foo" -> intProcName = "internalFoo"
+    intProcName = "internal" & procName[0].toUpperAscii() & procName[1 .. procName.high]
+    intProcSym = ident(intProcName)
 
   result = quote do:
-    proc `wrapperProcSym`() =
+    proc `procSym`() =
       # Below proc needs to have the signature "proc (a1: cstring): cint
       # {.cdecl.}"  as that's what nimterop auto-parses the
       # `t_vpi_systf_data.calltf` type to.
-      proc `procSym`(s: cstring): cint {.cdecl.} =
+      proc `intProcSym`(s: cstring): cint {.cdecl.} =
         `body`
 
       var
         taskDataObj = s_vpi_systf_data(type: vpiSysTask,
                                        tfname: "$" & `procName`,
-                                       calltf: `procSym`,
+                                       calltf: `intProcSym`,
                                        compiletf: nil)
 
       discard vpi_register_systf(addr taskDataObj)
