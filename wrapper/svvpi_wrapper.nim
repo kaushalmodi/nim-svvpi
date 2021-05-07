@@ -1,9 +1,9 @@
 
 # Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl
 # Importing /path/to/sv_vpi_user.h
-# Generated @ 2021-04-30T14:19:57-04:00
+# Generated @ 2021-05-07T11:22:00-04:00
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/cad/adi/apps/nim/1.2.0/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_3871445693.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_2521581214.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_946733718.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_636053994.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'
@@ -856,26 +856,18 @@ const
   vpiAssertionSysEnableNonvacuousAction* = 643
   vpiAssertionSysDisableVacuousAction* = 644
 type
-  PLI_INT64* {.importc, impsv_vpi_userHdr.} = int64
-  PLI_UINT64* {.importc, impsv_vpi_userHdr.} = uint64
-  PLI_INT32* {.importc, impsv_vpi_userHdr.} = cint
-  PLI_UINT32* {.importc, impsv_vpi_userHdr.} = cuint
-  PLI_INT16* {.importc, impsv_vpi_userHdr.} = cshort
-  PLI_UINT16* {.importc, impsv_vpi_userHdr.} = cushort
-  PLI_BYTE8* {.importc, impsv_vpi_userHdr.} = cchar
-  PLI_UBYTE8* {.importc, impsv_vpi_userHdr.} = cuchar
-  vpiHandle* {.importc, impsv_vpi_userHdr.} = ptr PLI_UINT32
+  vpiHandle* {.importc, impsv_vpi_userHdr.} = ptr cuint
   t_vpi_time* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_time".} = object
-    `type`*: PLI_INT32 ## ```
-                     ##   [vpiScaledRealTime, vpiSimTime,
-                     ##                                        vpiSuppressTime]
-                     ## ```
-    high*: PLI_UINT32          ## ```
-                    ##   for vpiSimTime
-                    ## ```
-    low*: PLI_UINT32           ## ```
-                   ##   for vpiSimTime
-                   ## ```
+    `type`*: cint ## ```
+                ##   [vpiScaledRealTime, vpiSimTime,
+                ##                                        vpiSuppressTime]
+                ## ```
+    high*: cuint               ## ```
+               ##   for vpiSimTime
+               ## ```
+    low*: cuint                ## ```
+              ##   for vpiSimTime
+              ## ```
     real*: cdouble             ## ```
                  ##   for vpiScaledRealTime
                  ## ```
@@ -887,46 +879,46 @@ type
                      ##   pointer to application-allocated
                      ##                                       array of delay values
                      ## ```
-    no_of_delays*: PLI_INT32   ## ```
-                           ##   number of delays
-                           ## ```
-    time_type*: PLI_INT32 ## ```
-                        ##   [vpiScaledRealTime, vpiSimTime,
-                        ##                                        vpiSuppressTime]
-                        ## ```
-    mtm_flag*: PLI_INT32       ## ```
-                       ##   true for mtm values
-                       ## ```
-    append_flag*: PLI_INT32    ## ```
-                          ##   true for append
-                          ## ```
-    pulsere_flag*: PLI_INT32   ## ```
-                           ##   true for pulsere values
-                           ## ```
+    no_of_delays*: cint        ## ```
+                      ##   number of delays
+                      ## ```
+    time_type*: cint ## ```
+                   ##   [vpiScaledRealTime, vpiSimTime,
+                   ##                                        vpiSuppressTime]
+                   ## ```
+    mtm_flag*: cint            ## ```
+                  ##   true for mtm values
+                  ## ```
+    append_flag*: cint         ## ```
+                     ##   true for append
+                     ## ```
+    pulsere_flag*: cint        ## ```
+                      ##   true for pulsere values
+                      ## ```
   
   s_vpi_delay* {.importc, impsv_vpi_userHdr.} = t_vpi_delay
   p_vpi_delay* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_delay
   t_vpi_vecval* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_vecval".} = object
-    aval*: PLI_UINT32          ## ```
-                    ##   bit encoding: ab: 00=0, 10=1, 11=X, 01=Z
-                    ## ```
-    bval*: PLI_UINT32          ## ```
-                    ##   bit encoding: ab: 00=0, 10=1, 11=X, 01=Z
-                    ## ```
+    aval*: cuint               ## ```
+               ##   bit encoding: ab: 00=0, 10=1, 11=X, 01=Z
+               ## ```
+    bval*: cuint               ## ```
+               ##   bit encoding: ab: 00=0, 10=1, 11=X, 01=Z
+               ## ```
   
   s_vpi_vecval* {.importc, impsv_vpi_userHdr.} = t_vpi_vecval
   p_vpi_vecval* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_vecval
   t_vpi_strengthval* {.bycopy, impsv_vpi_userHdr,
                       importc: "struct t_vpi_strengthval".} = object
-    logic*: PLI_INT32          ## ```
-                    ##   vpi[0,1,X,Z]
-                    ## ```
-    s0*: PLI_INT32             ## ```
-                 ##   refer to strength coding below
-                 ## ```
-    s1*: PLI_INT32             ## ```
-                 ##   refer to strength coding below
-                 ## ```
+    logic*: cint               ## ```
+               ##   vpi[0,1,X,Z]
+               ## ```
+    s0*: cint                  ## ```
+            ##   refer to strength coding below
+            ## ```
+    s1*: cint                  ## ```
+            ##   refer to strength coding below
+            ## ```
   
   s_vpi_strengthval* {.importc, impsv_vpi_userHdr.} = t_vpi_strengthval
   p_vpi_strengthval* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_strengthval
@@ -935,15 +927,15 @@ type
                                                                     ##   vpi[[Bin,Oct,Dec,Hex]Str,Scalar,Int,Real,String,
                                                                     ##                              Vector,Strength,Suppress,Time,ObjType]Val
                                                                     ## ```
-    str*: ptr PLI_BYTE8         ## ```
-                     ##   string value
-                     ## ```
-    scalar*: PLI_INT32         ## ```
-                     ##   vpi[0,1,X,Z]
-                     ## ```
-    integer*: PLI_INT32        ## ```
-                      ##   integer value
-                      ## ```
+    str*: cstring              ## ```
+                ##   string value
+                ## ```
+    scalar*: cint              ## ```
+                ##   vpi[0,1,X,Z]
+                ## ```
+    integer*: cint             ## ```
+                 ##   integer value
+                 ## ```
     real*: cdouble             ## ```
                  ##   real value
                  ## ```
@@ -956,15 +948,15 @@ type
     strength*: ptr t_vpi_strengthval ## ```
                                   ##   strength value
                                   ## ```
-    misc*: ptr PLI_BYTE8        ## ```
-                      ##   ...other
-                      ## ```
+    misc*: cstring             ## ```
+                 ##   ...other
+                 ## ```
   
   t_vpi_value* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_value".} = object
-    format*: PLI_INT32 ## ```
-                     ##   vpi[[Bin,Oct,Dec,Hex]Str,Scalar,Int,Real,String,
-                     ##                              Vector,Strength,Suppress,Time,ObjType]Val
-                     ## ```
+    format*: cint ## ```
+                ##   vpi[[Bin,Oct,Dec,Hex]Str,Scalar,Int,Real,String,
+                ##                              Vector,Strength,Suppress,Time,ObjType]Val
+                ## ```
     value*: Union_sv_vpi_userh1 ## ```
                               ##   vpi[[Bin,Oct,Dec,Hex]Str,Scalar,Int,Real,String,
                               ##                              Vector,Strength,Suppress,Time,ObjType]Val
@@ -976,18 +968,18 @@ type
                         importc: "union Union_sv_vpi_userh2".} = object ## ```
                                                                     ##   array bit flags- vpiUserAllocFlag
                                                                     ## ```
-    integers*: ptr PLI_INT32    ## ```
-                          ##   integer values
-                          ## ```
-    shortints*: ptr PLI_INT16   ## ```
-                           ##   short integer values
-                           ## ```
-    longints*: ptr PLI_INT64    ## ```
+    integers*: ptr cint         ## ```
+                     ##   integer values
+                     ## ```
+    shortints*: ptr cshort      ## ```
+                        ##   short integer values
+                        ## ```
+    longints*: ptr clonglong    ## ```
                           ##   long integer values
                           ## ```
-    rawvals*: ptr PLI_BYTE8     ## ```
-                         ##   2/4-state vector elements
-                         ## ```
+    rawvals*: cstring          ## ```
+                    ##   2/4-state vector elements
+                    ## ```
     vectors*: ptr t_vpi_vecval  ## ```
                             ##   4-state vector elements
                             ## ```
@@ -1002,13 +994,13 @@ type
                          ## ```
   
   t_vpi_arrayvalue* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_arrayvalue".} = object
-    format*: PLI_UINT32 ## ```
-                      ##   vpi[Int,Real,Time,ShortInt,LongInt,ShortReal,
-                      ##                             RawTwoState,RawFourState]Val
-                      ## ```
-    flags*: PLI_UINT32         ## ```
-                     ##   array bit flags- vpiUserAllocFlag
-                     ## ```
+    format*: cuint ## ```
+                 ##   vpi[Int,Real,Time,ShortInt,LongInt,ShortReal,
+                 ##                             RawTwoState,RawFourState]Val
+                 ## ```
+    flags*: cuint              ## ```
+                ##   array bit flags- vpiUserAllocFlag
+                ## ```
     value*: Union_sv_vpi_userh2 ## ```
                               ##   array bit flags- vpiUserAllocFlag
                               ## ```
@@ -1016,61 +1008,61 @@ type
   s_vpi_arrayvalue* {.importc, impsv_vpi_userHdr.} = t_vpi_arrayvalue
   p_vpi_arrayvalue* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_arrayvalue
   t_vpi_systf_data* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_systf_data".} = object
-    `type`*: PLI_INT32         ## ```
-                     ##   vpiSysTask, vpiSysFunc
+    `type`*: cint              ## ```
+                ##   vpiSysTask, vpiSysFunc
+                ## ```
+    sysfunctype*: cint ## ```
+                     ##   vpiSysTask, vpi[Int,Real,Time,Sized,
+                     ##                                                              SizedSigned]Func
                      ## ```
-    sysfunctype*: PLI_INT32 ## ```
-                          ##   vpiSysTask, vpi[Int,Real,Time,Sized,
-                          ##                                                              SizedSigned]Func
-                          ## ```
-    tfname*: ptr PLI_BYTE8      ## ```
-                        ##   first character must be '$'
-                        ## ```
-    calltf*: proc (a1: ptr PLI_BYTE8): PLI_INT32 {.cdecl.} ## ```
-                                                    ##   first character must be '$'
-                                                    ## ```
-    compiletf*: proc (a1: ptr PLI_BYTE8): PLI_INT32 {.cdecl.}
-    sizetf*: proc (a1: ptr PLI_BYTE8): PLI_INT32 {.cdecl.} ## ```
-                                                    ##   for sized function callbacks only
-                                                    ## ```
-    user_data*: ptr PLI_BYTE8   ## ```
-                           ##   for sized function callbacks only
-                           ## ```
+    tfname*: cstring           ## ```
+                   ##   first character must be '$'
+                   ## ```
+    calltf*: proc (a1: cstring): cint {.cdecl.} ## ```
+                                          ##   first character must be '$'
+                                          ## ```
+    compiletf*: proc (a1: cstring): cint {.cdecl.}
+    sizetf*: proc (a1: cstring): cint {.cdecl.} ## ```
+                                          ##   for sized function callbacks only
+                                          ## ```
+    user_data*: cstring        ## ```
+                      ##   for sized function callbacks only
+                      ## ```
   
   s_vpi_systf_data* {.importc, impsv_vpi_userHdr.} = t_vpi_systf_data
   p_vpi_systf_data* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_systf_data
   t_vpi_vlog_info* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_vlog_info".} = object
-    argc*: PLI_INT32
-    argv*: ptr ptr PLI_BYTE8
-    product*: ptr PLI_BYTE8
-    version*: ptr PLI_BYTE8
+    argc*: cint
+    argv*: ptr cstring
+    product*: cstring
+    version*: cstring
 
   s_vpi_vlog_info* {.importc, impsv_vpi_userHdr.} = t_vpi_vlog_info
   p_vpi_vlog_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_vlog_info
   t_vpi_error_info* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_error_info".} = object
-    state*: PLI_INT32          ## ```
-                    ##   vpi[Compile,PLI,Run]
-                    ## ```
-    level*: PLI_INT32          ## ```
+    state*: cint               ## ```
+               ##   vpi[Compile,PLI,Run]
+               ## ```
+    level*: cint               ## ```
+               ##   vpi[Notice,Warning,Error,System,Internal]
+               ## ```
+    message*: cstring          ## ```
                     ##   vpi[Notice,Warning,Error,System,Internal]
                     ## ```
-    message*: ptr PLI_BYTE8     ## ```
-                         ##   vpi[Notice,Warning,Error,System,Internal]
-                         ## ```
-    product*: ptr PLI_BYTE8
-    code*: ptr PLI_BYTE8
-    file*: ptr PLI_BYTE8
-    line*: PLI_INT32
+    product*: cstring
+    code*: cstring
+    file*: cstring
+    line*: cint
 
   s_vpi_error_info* {.importc, impsv_vpi_userHdr.} = t_vpi_error_info
   p_vpi_error_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_error_info
   t_cb_data* {.bycopy, impsv_vpi_userHdr, importc: "struct t_cb_data".} = object
-    reason*: PLI_INT32         ## ```
-                     ##   callback reason
-                     ## ```
-    cb_rtn*: proc (a1: ptr t_cb_data): PLI_INT32 {.cdecl.} ## ```
-                                                    ##   call routine
-                                                    ## ```
+    reason*: cint              ## ```
+                ##   callback reason
+                ## ```
+    cb_rtn*: proc (a1: ptr t_cb_data): cint {.cdecl.} ## ```
+                                               ##   call routine
+                                               ## ```
     obj*: vpiHandle            ## ```
                   ##   trigger object
                   ## ```
@@ -1080,29 +1072,29 @@ type
     value*: p_vpi_value        ## ```
                       ##   trigger object value
                       ## ```
-    index*: PLI_INT32 ## ```
-                    ##   index of the memory word or
-                    ##                                                    var select that changed
-                    ## ```
-    user_data*: ptr PLI_BYTE8 ## ```
-                           ##   index of the memory word or
-                           ##                                                    var select that changed
-                           ## ```
+    index*: cint ## ```
+               ##   index of the memory word or
+               ##                                                    var select that changed
+               ## ```
+    user_data*: cstring ## ```
+                      ##   index of the memory word or
+                      ##                                                    var select that changed
+                      ## ```
   
   s_cb_data* {.importc, impsv_vpi_userHdr.} = t_cb_data
   p_cb_data* {.importc, impsv_vpi_userHdr.} = ptr t_cb_data
   t_vpi_assertion_step_info* {.bycopy, impsv_vpi_userHdr,
                               importc: "struct t_vpi_assertion_step_info".} = object
-    matched_expression_count*: PLI_INT32
+    matched_expression_count*: cint
     matched_exprs*: ptr vpiHandle ## ```
                                ##   array of expressions
                                ## ```
-    stateFrom*: PLI_INT32      ## ```
-                        ##   identify transition
-                        ## ```
-    stateTo*: PLI_INT32        ## ```
-                      ##   identify transition
-                      ## ```
+    stateFrom*: cint           ## ```
+                   ##   identify transition
+                   ## ```
+    stateTo*: cint             ## ```
+                 ##   identify transition
+                 ## ```
   
   s_vpi_assertion_step_info* {.importc, impsv_vpi_userHdr.} = t_vpi_assertion_step_info
   p_vpi_assertion_step_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_assertion_step_info
@@ -1120,36 +1112,35 @@ type
   
   s_vpi_attempt_info* {.importc, impsv_vpi_userHdr.} = t_vpi_attempt_info
   p_vpi_attempt_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_attempt_info
-  vpi_assertion_callback_func* {.importc, impsv_vpi_userHdr.} = proc (
-      reason: PLI_INT32; cb_time: p_vpi_time; assertion: vpiHandle;
-      info: p_vpi_attempt_info; user_data: ptr PLI_BYTE8): PLI_INT32 {.cdecl.}
+  vpi_assertion_callback_func* {.importc, impsv_vpi_userHdr.} = proc (reason: cint;
+      cb_time: p_vpi_time; assertion: vpiHandle; info: p_vpi_attempt_info;
+      user_data: cstring): cint {.cdecl.}
 proc vpi_register_cb*(cb_data_p: p_cb_data): vpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_remove_cb*(cb_obj: vpiHandle): PLI_INT32 {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_remove_cb*(cb_obj: vpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
 proc vpi_get_cb_info*(`object`: vpiHandle; cb_data_p: p_cb_data) {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_register_systf*(systf_data_p: p_vpi_systf_data): vpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_get_systf_info*(`object`: vpiHandle; systf_data_p: p_vpi_systf_data) {.
     importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_by_name*(name: ptr PLI_BYTE8; scope: vpiHandle): vpiHandle {.importc,
-    cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_by_index*(`object`: vpiHandle; indx: PLI_INT32): vpiHandle {.importc,
-    cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_1*(`type`: PLI_INT32; refHandle: vpiHandle): vpiHandle {.
+proc vpi_handle_by_name*(name: cstring; scope: vpiHandle): vpiHandle {.importc, cdecl,
+    impsv_vpi_userHdr.}
+proc vpi_handle_by_index*(`object`: vpiHandle; indx: cint): vpiHandle {.importc, cdecl,
+    impsv_vpi_userHdr.}
+proc vpi_handle_1*(`type`: cint; refHandle: vpiHandle): vpiHandle {.
     importc: "vpi_handle", cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_multi*(`type`: PLI_INT32; refHandle1: vpiHandle;
-                      refHandle2: vpiHandle): vpiHandle {.importc, cdecl,
-    impsv_vpi_userHdr, varargs.}
-proc vpi_iterate*(`type`: PLI_INT32; refHandle: vpiHandle): vpiHandle {.importc, cdecl,
+proc vpi_handle_multi*(`type`: cint; refHandle1: vpiHandle; refHandle2: vpiHandle): vpiHandle {.
+    importc, cdecl, impsv_vpi_userHdr, varargs.}
+proc vpi_iterate*(`type`: cint; refHandle: vpiHandle): vpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_scan*(`iterator`: vpiHandle): vpiHandle {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_get*(property: PLI_INT32; `object`: vpiHandle): PLI_INT32 {.importc, cdecl,
+proc vpi_get*(property: cint; `object`: vpiHandle): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get64*(property: PLI_INT32; `object`: vpiHandle): PLI_INT64 {.importc, cdecl,
+proc vpi_get64*(property: cint; `object`: vpiHandle): clonglong {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_str*(property: PLI_INT32; `object`: vpiHandle): ptr PLI_BYTE8 {.importc,
-    cdecl, impsv_vpi_userHdr.}
+proc vpi_get_str*(property: cint; `object`: vpiHandle): cstring {.importc, cdecl,
+    impsv_vpi_userHdr.}
 proc vpi_get_delays*(`object`: vpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_put_delays*(`object`: vpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
@@ -1157,58 +1148,53 @@ proc vpi_put_delays*(`object`: vpiHandle; delay_p: p_vpi_delay) {.importc, cdecl
 proc vpi_get_value*(expr: vpiHandle; value_p: p_vpi_value) {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_put_value*(`object`: vpiHandle; value_p: p_vpi_value; time_p: p_vpi_time;
-                   flags: PLI_INT32): vpiHandle {.importc, cdecl, impsv_vpi_userHdr.}
+                   flags: cint): vpiHandle {.importc, cdecl, impsv_vpi_userHdr.}
 proc vpi_get_value_array*(`object`: vpiHandle; arrayvalue_p: p_vpi_arrayvalue;
-                         index_p: ptr PLI_INT32; num: PLI_UINT32) {.importc, cdecl,
+                         index_p: ptr cint; num: cuint) {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_put_value_array*(`object`: vpiHandle; arrayvalue_p: p_vpi_arrayvalue;
-                         index_p: ptr PLI_INT32; num: PLI_UINT32) {.importc, cdecl,
+                         index_p: ptr cint; num: cuint) {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_get_time*(`object`: vpiHandle; time_p: p_vpi_time) {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_mcd_open*(fileName: ptr PLI_BYTE8): PLI_UINT32 {.importc, cdecl,
+proc vpi_mcd_open*(fileName: cstring): cuint {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_mcd_close*(mcd: cuint): cuint {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_mcd_name*(cd: cuint): cstring {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_mcd_printf*(mcd: cuint; format: cstring): cint {.importc, cdecl,
+    impsv_vpi_userHdr, varargs.}
+proc vpi_printf*(format: cstring): cint {.importc, cdecl, impsv_vpi_userHdr, varargs.}
+proc vpi_compare_objects*(object1: vpiHandle; object2: vpiHandle): cint {.importc,
+    cdecl, impsv_vpi_userHdr.}
+proc vpi_chk_error*(error_info_p: p_vpi_error_info): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_mcd_close*(mcd: PLI_UINT32): PLI_UINT32 {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_mcd_name*(cd: PLI_UINT32): ptr PLI_BYTE8 {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_mcd_printf*(mcd: PLI_UINT32; format: ptr PLI_BYTE8): PLI_INT32 {.importc,
-    cdecl, impsv_vpi_userHdr, varargs.}
-proc vpi_printf*(format: ptr PLI_BYTE8): PLI_INT32 {.importc, cdecl, impsv_vpi_userHdr,
-    varargs.}
-proc vpi_compare_objects*(object1: vpiHandle; object2: vpiHandle): PLI_INT32 {.
-    importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_chk_error*(error_info_p: p_vpi_error_info): PLI_INT32 {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_free_object*(`object`: vpiHandle): PLI_INT32 {.importc, cdecl,
-    impsv_vpi_userHdr.}
+proc vpi_free_object*(`object`: vpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
   ## ```
   ##   vpi_free_object() is deprecated in 1800-2009
   ## ```
-proc vpi_release_handle*(`object`: vpiHandle): PLI_INT32 {.importc, cdecl,
+proc vpi_release_handle*(`object`: vpiHandle): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_vlog_info*(vlog_info_p: p_vpi_vlog_info): PLI_INT32 {.importc, cdecl,
+proc vpi_get_vlog_info*(vlog_info_p: p_vpi_vlog_info): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_data*(id: PLI_INT32; dataLoc: ptr PLI_BYTE8; numOfBytes: PLI_INT32): PLI_INT32 {.
-    importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_put_data*(id: PLI_INT32; dataLoc: ptr PLI_BYTE8; numOfBytes: PLI_INT32): PLI_INT32 {.
-    importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_get_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc, cdecl,
+    impsv_vpi_userHdr.}
+proc vpi_put_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc, cdecl,
+    impsv_vpi_userHdr.}
 proc vpi_get_userdata*(obj: vpiHandle): pointer {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_put_userdata*(obj: vpiHandle; userdata: pointer): PLI_INT32 {.importc, cdecl,
+proc vpi_put_userdata*(obj: vpiHandle; userdata: pointer): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_vprintf*(format: ptr PLI_BYTE8; ap: va_list): PLI_INT32 {.importc, cdecl,
+proc vpi_vprintf*(format: cstring; ap: va_list): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_mcd_vprintf*(mcd: PLI_UINT32; format: ptr PLI_BYTE8; ap: va_list): PLI_INT32 {.
-    importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_flush*(): PLI_INT32 {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_mcd_flush*(mcd: PLI_UINT32): PLI_INT32 {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_control*(operation: PLI_INT32): PLI_INT32 {.importc, cdecl,
-    impsv_vpi_userHdr, varargs.}
-proc vpi_handle_by_multi_index*(obj: vpiHandle; num_index: PLI_INT32;
-                               index_array: ptr PLI_INT32): vpiHandle {.importc,
-    cdecl, impsv_vpi_userHdr.}
-proc vlog_startup_routines*() {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_register_assertion_cb*(assertion: vpiHandle; reason: PLI_INT32;
+proc vpi_mcd_vprintf*(mcd: cuint; format: cstring; ap: va_list): cint {.importc, cdecl,
+    impsv_vpi_userHdr.}
+proc vpi_flush*(): cint {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_mcd_flush*(mcd: cuint): cint {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_control*(operation: cint): cint {.importc, cdecl, impsv_vpi_userHdr, varargs.}
+proc vpi_handle_by_multi_index*(obj: vpiHandle; num_index: cint;
+                               index_array: ptr cint): vpiHandle {.importc, cdecl,
+    impsv_vpi_userHdr.}
+proc vpi_register_assertion_cb*(assertion: vpiHandle; reason: cint;
                                cb_rtn: ptr vpi_assertion_callback_func;
-                               user_data: ptr PLI_BYTE8): vpiHandle {.importc, cdecl,
+                               user_data: cstring): vpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
 {.pop.}
 

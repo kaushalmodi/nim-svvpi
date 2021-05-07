@@ -19,11 +19,23 @@ static:
 
 cPlugin:
   proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
+    case sym.name
     # For Nim, the vpiHandle and vpi_handle identifiers are identical.
     # But the vpi_user.h has vpiHandle for type name and vpi_handle for a function
     # name. Below maps the vpi_handle function to a vpi_handle_1 proc in Nim.
-    if sym.name == "vpi_handle":
-      sym.name = "vpi_handle_1"
+    of "vpi_handle": sym.name = "vpi_handle_1"
+    # If below substition is not done, nimterop does not infer "PLI_BYTE8 *" type as
+    # cstring.
+    of "PLI_BYTE8":  sym.name = "cchar"
+    # Replacing other similar types just for consistency.
+    of "PLI_UBYTE8":  sym.name = "cuchar"
+    of "PLI_INT16": sym.name = "cshort"
+    of "PLI_UINT16":  sym.name = "cushort"
+    of "PLI_INT32": sym.name = "cint"
+    of "PLI_UINT32": sym.name = "cuint"
+    of "PLI_INT64": sym.name = "clonglong"
+    of "PLI_UINT64": sym.name = "culonglong"
+    else: discard
 
 # cdefine("VPI_COMPATIBILITY_VERSION_1800v2009")
 
