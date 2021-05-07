@@ -1,3 +1,5 @@
+# https://stackoverflow.com/a/25592735/1219634
+
 # Ignore all
 *
 
@@ -7,9 +9,21 @@
 # Unignore all dirs
 !*/
 
-!LICENSE
+# Unignore make files
+!makefile
+!Makefile
 
-.nimcache/
-*.so
 xcelium.d/
-xrun.*
+*.log
+*.so
+*.history
+.nimcache/
+sigusrdump.out
+work/
+xrun.key
+*.o
+*.a
+.bpad/
+.simvision/
+bpad*.err
+waves.shm/
