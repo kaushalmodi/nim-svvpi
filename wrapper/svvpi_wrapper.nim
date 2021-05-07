@@ -1,7 +1,6 @@
 
 # Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl
 # Importing /path/to/sv_vpi_user.h
-# Generated @ 2021-05-07T11:22:00-04:00
 # Command line:
 #   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_946733718.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_636053994.nim
 
