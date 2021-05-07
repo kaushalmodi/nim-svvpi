@@ -6,5 +6,5 @@ vpiDefineTask hello:
 vpiDefineTask bye:
   discard vpi_printf("Bye!\n")
 
-# Register the new system task.
+# Register the tasks.
 setVlogStartupRoutines(hello, bye)
