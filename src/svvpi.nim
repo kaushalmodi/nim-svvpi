@@ -89,6 +89,7 @@ macro vpiDefineTask*(procSym, body: untyped) =
         taskDataObj = s_vpi_systf_data(type: vpiSysTask,
                                        tfname: "$" & `procName`,
                                        calltf: `intProcSym`,
-                                       compiletf: nil)
+                                       compiletf: nil,
+                                       sizetf: nil)
 
       discard vpi_register_systf(addr taskDataObj)
