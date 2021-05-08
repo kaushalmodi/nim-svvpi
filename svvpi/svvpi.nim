@@ -9,7 +9,7 @@ when defined(svGenWrapper):
 const
   # includePath = getEnv("XCELIUM_ROOT") / ".." / "include"
   sourceDir = currentSourcePath.parentDir()
-  includePath = sourceDir / ".." / "includes"
+  includePath = sourceDir / "includes"
 static:
   doAssert fileExists(includePath / "sv_vpi_user.h")
   doAssert fileExists(includePath / "vpi_user.h")
