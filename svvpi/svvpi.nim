@@ -37,7 +37,7 @@ cPlugin:
     of "PLI_UINT64": sym.name = "culonglong"
     else: discard
 
-# cdefine("VPI_COMPATIBILITY_VERSION_1800v2009")
+cDefine("VPI_COMPATIBILITY_VERSION_1800v2009")
 
 cOverride:
   const
@@ -50,6 +50,49 @@ cOverride:
     vpiInterfaceDecl* = vpiVirtualInterfaceVar
 
 cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
+# 1800-2009 compatibility
+proc vpi_compare_objects*(object1: vpiHandle; object2: vpiHandle): cint =
+  return vpi_compare_objects_1800v2009(object1, object2)
+
+proc vpi_control*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl,
+                                           impsv_vpi_userHdr, varargs.}
+
+proc vpi_get*(property: cint; obj: vpiHandle): cint =
+  return vpi_get_1800v2009(property, obj)
+
+proc vpi_get_str*(property: cint; obj: vpiHandle): cstring =
+  return vpi_get_str_1800v2009(property, obj)
+
+proc vpi_get_value*(expr: vpiHandle; value_p: p_vpi_value) =
+  vpi_get_value_1800v2009(expr, value_p)
+
+proc get_vpi_handle*(typ: cint; refHandle: vpiHandle): vpiHandle =
+  return vpi_handle_1800v2009(typ, refHandle)
+
+proc vpi_handle_multi*(typ: cint; refHandle1, refHandle2: vpiHandle): vpiHandle {.importc: "vpi_handle_multi_1800v2009",
+                                                                                  cdecl, impsv_vpi_userHdr, varargs.}
+
+proc vpi_handle_by_index*(obj: vpiHandle; indx: cint): vpiHandle =
+  return vpi_handle_by_index_1800v2009(obj, indx)
+
+proc vpi_handle_by_multi_index*(obj: vpiHandle; num_index: cint; index_array: ptr cint): vpiHandle =
+  return vpi_handle_by_multi_index_1800v2009(obj, num_index, index_array)
+
+proc vpi_handle_by_name*(name: cstring; scope: vpiHandle): vpiHandle =
+  return vpi_handle_by_name_1800v2009(name, scope)
+
+proc vpi_iterate*(typ: cint; refHandle: vpiHandle): vpiHandle =
+  return vpi_iterate_1800v2009(typ, refHandle)
+
+proc vpi_put_value*(obj: vpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): vpiHandle =
+  return vpi_put_value_1800v2009(obj, value_p, time_p, flags)
+
+proc vpi_register_cb*(cb_data_p: p_cb_data): vpiHandle =
+  return vpi_register_cb_1800v2009(cb_data_p)
+
+proc vpi_scan*(iter: vpiHandle): vpiHandle =
+  return vpi_scan_1800v2009(iter)
+
 
 proc vpiEcho*(format: string): cint {.discardable.} =
   return vpi_printf(format & "\n")
