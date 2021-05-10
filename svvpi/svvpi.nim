@@ -49,6 +49,9 @@ cOverride:
     vpiArrayNet* = vpiNetArray
     vpiInterfaceDecl* = vpiVirtualInterfaceVar
 
+  # Procs with discardable return values.
+  proc vpi_printf*(format: cstring): cint {.importc, cdecl, impsv_vpi_userHdr, varargs, discardable.}
+
 cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
 
 # https://forum.nim-lang.org/t/7945#50584
