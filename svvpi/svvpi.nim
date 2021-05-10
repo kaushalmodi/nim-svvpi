@@ -22,8 +22,8 @@ cPlugin:
     case sym.name
     # For Nim, the vpiHandle and vpi_handle identifiers are identical.
     # But the vpi_user.h has vpiHandle for type name and vpi_handle for a function
-    # name. Below maps the vpi_handle function to a vpi_handle_1 proc in Nim.
-    of "vpi_handle": sym.name = "vpi_handle_1"
+    # name. Below maps the vpi_handle function to a get_vpi_handle proc in Nim.
+    of "vpi_handle": sym.name = "get_vpi_handle"
     # If below substition is not done, nimterop does not infer "PLI_BYTE8 *" type as
     # cstring.
     of "PLI_BYTE8":  sym.name = "cchar"

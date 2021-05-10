@@ -1,8 +1,8 @@
 
-# Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl
+# Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl vpi_printf
 # Importing /path/to/sv_vpi_user.h
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_946733718.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_636053994.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl,vpi_printf --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_2907947299.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_3625415322.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'
@@ -1127,7 +1127,7 @@ proc vpi_handle_by_name*(name: cstring; scope: vpiHandle): vpiHandle {.importc, 
     impsv_vpi_userHdr.}
 proc vpi_handle_by_index*(`object`: vpiHandle; indx: cint): vpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_handle_1*(`type`: cint; refHandle: vpiHandle): vpiHandle {.
+proc get_vpi_handle*(`type`: cint; refHandle: vpiHandle): vpiHandle {.
     importc: "vpi_handle", cdecl, impsv_vpi_userHdr.}
 proc vpi_handle_multi*(`type`: cint; refHandle1: vpiHandle; refHandle2: vpiHandle): vpiHandle {.
     importc, cdecl, impsv_vpi_userHdr, varargs.}
