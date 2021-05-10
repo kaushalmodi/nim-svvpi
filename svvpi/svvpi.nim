@@ -49,10 +49,10 @@ cOverride:
     vpiArrayNet* = vpiNetArray
     vpiInterfaceDecl* = vpiVirtualInterfaceVar
 
-  # Procs with discardable return values.
-  proc vpi_printf*(format: cstring): cint {.importc, cdecl, impsv_vpi_userHdr, varargs, discardable.}
-
 cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
+
+proc vpiEcho*(format: string): cint {.discardable.} =
+  return vpi_printf(format & "\n")
 
 # https://forum.nim-lang.org/t/7945#50584
 # User code must call this template at global scope, and only once!

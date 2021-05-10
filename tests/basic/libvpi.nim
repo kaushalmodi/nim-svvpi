@@ -1,10 +1,10 @@
 import svvpi
 
 vpiDefineTask hello:
-  vpi_printf("Hello!\n")
+  vpiEcho("Hello!")
 
 vpiDefineTask bye:
-  vpi_printf("Bye!\n")
+  vpiEcho("Bye!")
 
 # Register the tasks.
 setVlogStartupRoutines(hello, bye)
