@@ -50,6 +50,8 @@ cOverride:
     vpiInterfaceDecl* = vpiVirtualInterfaceVar
 
 cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
+cImport(cSearchPath("veriuser.h"), recurse = true, flags = "-f:ast2") # Mainly for tf_dofinish
+
 # 1800-2009 compatibility
 proc vpi_compare_objects*(object1: vpiHandle; object2: vpiHandle): cint =
   return vpi_compare_objects_1800v2009(object1, object2)
