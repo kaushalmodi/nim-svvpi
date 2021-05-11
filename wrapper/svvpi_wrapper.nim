@@ -2,7 +2,7 @@
 # Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl
 # Importing /path/to/sv_vpi_user.h
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_2372033297.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_2675055729.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_225075350.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_756494141.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'
@@ -870,7 +870,7 @@ const
   vpiAssertionSysEnableNonvacuousAction* = 643
   vpiAssertionSysDisableVacuousAction* = 644
 type
-  vpiHandle* {.importc, impsv_vpi_userHdr.} = ptr cuint
+  VpiHandle* {.impsv_vpi_userHdr, importc: "vpiHandle".} = ptr cuint
   t_vpi_time* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_time".} = object
     `type`*: cint ## ```
                 ##   [vpiScaledRealTime, vpiSimTime,
@@ -1077,7 +1077,7 @@ type
     cb_rtn*: proc (a1: ptr t_cb_data): cint {.cdecl.} ## ```
                                                ##   call routine
                                                ## ```
-    obj*: vpiHandle            ## ```
+    obj*: VpiHandle            ## ```
                   ##   trigger object
                   ## ```
     time*: p_vpi_time          ## ```
@@ -1100,7 +1100,7 @@ type
   t_vpi_assertion_step_info* {.bycopy, impsv_vpi_userHdr,
                               importc: "struct t_vpi_assertion_step_info".} = object
     matched_expression_count*: cint
-    matched_exprs*: ptr vpiHandle ## ```
+    matched_exprs*: ptr VpiHandle ## ```
                                ##   array of expressions
                                ## ```
     stateFrom*: cint           ## ```
@@ -1114,7 +1114,7 @@ type
   p_vpi_assertion_step_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_assertion_step_info
   Union_sv_vpi_userh3* {.union, bycopy, impsv_vpi_userHdr,
                         importc: "union Union_sv_vpi_userh3".} = object
-    failExpr*: vpiHandle
+    failExpr*: VpiHandle
     step*: p_vpi_assertion_step_info
 
   t_vpi_attempt_info* {.bycopy, impsv_vpi_userHdr,
@@ -1127,52 +1127,52 @@ type
   s_vpi_attempt_info* {.importc, impsv_vpi_userHdr.} = t_vpi_attempt_info
   p_vpi_attempt_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_attempt_info
   vpi_assertion_callback_func* {.importc, impsv_vpi_userHdr.} = proc (reason: cint;
-      cb_time: p_vpi_time; assertion: vpiHandle; info: p_vpi_attempt_info;
+      cb_time: p_vpi_time; assertion: VpiHandle; info: p_vpi_attempt_info;
       user_data: cstring): cint {.cdecl.}
-proc vpi_register_cb_1800v2009*(cb_data_p: p_cb_data): vpiHandle {.importc, cdecl,
+proc vpi_register_cb_1800v2009*(cb_data_p: p_cb_data): VpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_remove_cb*(cb_obj: vpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_get_cb_info*(`object`: vpiHandle; cb_data_p: p_cb_data) {.importc, cdecl,
+proc vpi_remove_cb*(cb_obj: VpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_get_cb_info*(`object`: VpiHandle; cb_data_p: p_cb_data) {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_register_systf*(systf_data_p: p_vpi_systf_data): vpiHandle {.importc, cdecl,
+proc vpi_register_systf*(systf_data_p: p_vpi_systf_data): VpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_systf_info*(`object`: vpiHandle; systf_data_p: p_vpi_systf_data) {.
+proc vpi_get_systf_info*(`object`: VpiHandle; systf_data_p: p_vpi_systf_data) {.
     importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_by_name_1800v2009*(name: cstring; scope: vpiHandle): vpiHandle {.
+proc vpi_handle_by_name_1800v2009*(name: cstring; scope: VpiHandle): VpiHandle {.
     importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_by_index_1800v2009*(`object`: vpiHandle; indx: cint): vpiHandle {.
+proc vpi_handle_by_index_1800v2009*(`object`: VpiHandle; indx: cint): VpiHandle {.
     importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_1800v2009*(`type`: cint; refHandle: vpiHandle): vpiHandle {.importc,
+proc vpi_handle_1800v2009*(`type`: cint; refHandle: VpiHandle): VpiHandle {.importc,
     cdecl, impsv_vpi_userHdr.}
-proc vpi_handle_multi_1800v2009*(`type`: cint; refHandle1: vpiHandle;
-                                refHandle2: vpiHandle): vpiHandle {.importc, cdecl,
+proc vpi_handle_multi_1800v2009*(`type`: cint; refHandle1: VpiHandle;
+                                refHandle2: VpiHandle): VpiHandle {.importc, cdecl,
     impsv_vpi_userHdr, varargs.}
-proc vpi_iterate_1800v2009*(`type`: cint; refHandle: vpiHandle): vpiHandle {.importc,
+proc vpi_iterate_1800v2009*(`type`: cint; refHandle: VpiHandle): VpiHandle {.importc,
     cdecl, impsv_vpi_userHdr.}
-proc vpi_scan_1800v2009*(`iterator`: vpiHandle): vpiHandle {.importc, cdecl,
+proc vpi_scan_1800v2009*(`iterator`: VpiHandle): VpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_1800v2009*(property: cint; `object`: vpiHandle): cint {.importc, cdecl,
+proc vpi_get_1800v2009*(property: cint; `object`: VpiHandle): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get64*(property: cint; `object`: vpiHandle): clonglong {.importc, cdecl,
+proc vpi_get64*(property: cint; `object`: VpiHandle): clonglong {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_str_1800v2009*(property: cint; `object`: vpiHandle): cstring {.importc,
+proc vpi_get_str_1800v2009*(property: cint; `object`: VpiHandle): cstring {.importc,
     cdecl, impsv_vpi_userHdr.}
-proc vpi_get_delays*(`object`: vpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
+proc vpi_get_delays*(`object`: VpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_put_delays*(`object`: vpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
+proc vpi_put_delays*(`object`: VpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_value_1800v2009*(expr: vpiHandle; value_p: p_vpi_value) {.importc, cdecl,
+proc vpi_get_value_1800v2009*(expr: VpiHandle; value_p: p_vpi_value) {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_put_value_1800v2009*(`object`: vpiHandle; value_p: p_vpi_value;
-                             time_p: p_vpi_time; flags: cint): vpiHandle {.importc,
+proc vpi_put_value_1800v2009*(`object`: VpiHandle; value_p: p_vpi_value;
+                             time_p: p_vpi_time; flags: cint): VpiHandle {.importc,
     cdecl, impsv_vpi_userHdr.}
-proc vpi_get_value_array*(`object`: vpiHandle; arrayvalue_p: p_vpi_arrayvalue;
+proc vpi_get_value_array*(`object`: VpiHandle; arrayvalue_p: p_vpi_arrayvalue;
                          index_p: ptr cint; num: cuint) {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_put_value_array*(`object`: vpiHandle; arrayvalue_p: p_vpi_arrayvalue;
+proc vpi_put_value_array*(`object`: VpiHandle; arrayvalue_p: p_vpi_arrayvalue;
                          index_p: ptr cint; num: cuint) {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_time*(`object`: vpiHandle; time_p: p_vpi_time) {.importc, cdecl,
+proc vpi_get_time*(`object`: VpiHandle; time_p: p_vpi_time) {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_mcd_open*(fileName: cstring): cuint {.importc, cdecl, impsv_vpi_userHdr.}
 proc vpi_mcd_close*(mcd: cuint): cuint {.importc, cdecl, impsv_vpi_userHdr.}
@@ -1180,15 +1180,15 @@ proc vpi_mcd_name*(cd: cuint): cstring {.importc, cdecl, impsv_vpi_userHdr.}
 proc vpi_mcd_printf*(mcd: cuint; format: cstring): cint {.importc, cdecl,
     impsv_vpi_userHdr, varargs.}
 proc vpi_printf*(format: cstring): cint {.importc, cdecl, impsv_vpi_userHdr, varargs.}
-proc vpi_compare_objects_1800v2009*(object1: vpiHandle; object2: vpiHandle): cint {.
+proc vpi_compare_objects_1800v2009*(object1: VpiHandle; object2: VpiHandle): cint {.
     importc, cdecl, impsv_vpi_userHdr.}
 proc vpi_chk_error*(error_info_p: p_vpi_error_info): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_free_object*(`object`: vpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_free_object*(`object`: VpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
   ## ```
   ##   vpi_free_object() is deprecated in 1800-2009
   ## ```
-proc vpi_release_handle*(`object`: vpiHandle): cint {.importc, cdecl,
+proc vpi_release_handle*(`object`: VpiHandle): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_get_vlog_info*(vlog_info_p: p_vpi_vlog_info): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
@@ -1196,8 +1196,8 @@ proc vpi_get_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc
     impsv_vpi_userHdr.}
 proc vpi_put_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
-proc vpi_get_userdata*(obj: vpiHandle): pointer {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_put_userdata*(obj: vpiHandle; userdata: pointer): cint {.importc, cdecl,
+proc vpi_get_userdata*(obj: VpiHandle): pointer {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_put_userdata*(obj: VpiHandle; userdata: pointer): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
 proc vpi_vprintf*(format: cstring; ap: va_list): cint {.importc, cdecl,
     impsv_vpi_userHdr.}
@@ -1207,17 +1207,17 @@ proc vpi_flush*(): cint {.importc, cdecl, impsv_vpi_userHdr.}
 proc vpi_mcd_flush*(mcd: cuint): cint {.importc, cdecl, impsv_vpi_userHdr.}
 proc vpi_control_1800v2009*(operation: cint): cint {.importc, cdecl,
     impsv_vpi_userHdr, varargs.}
-proc vpi_handle_by_multi_index_1800v2009*(obj: vpiHandle; num_index: cint;
-    index_array: ptr cint): vpiHandle {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_register_assertion_cb*(assertion: vpiHandle; reason: cint;
+proc vpi_handle_by_multi_index_1800v2009*(obj: VpiHandle; num_index: cint;
+    index_array: ptr cint): VpiHandle {.importc, cdecl, impsv_vpi_userHdr.}
+proc vpi_register_assertion_cb*(assertion: VpiHandle; reason: cint;
                                cb_rtn: ptr vpi_assertion_callback_func;
-                               user_data: cstring): vpiHandle {.importc, cdecl,
+                               user_data: cstring): VpiHandle {.importc, cdecl,
     impsv_vpi_userHdr.}
 {.pop.}
 
 # Importing /path/to/veriuser.h
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_1248902183.nim /path/to/veriuser.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_2905244743.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_259579795.nim /path/to/veriuser.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_2833027461.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'

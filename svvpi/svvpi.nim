@@ -20,10 +20,11 @@ static:
 cPlugin:
   proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
     case sym.name
-    # For Nim, the vpiHandle and vpi_handle identifiers are identical.
-    # But the vpi_user.h has vpiHandle for type name and vpi_handle for a function
-    # name. Below maps the vpi_handle function to a get_vpi_handle proc in Nim.
-    of "vpi_handle": sym.name = "get_vpi_handle"
+    # For Nim, the VpiHandle and vpi_handle identifiers are identical.
+    # But the vpi_user.h has VpiHandle for type name and vpi_handle for a function
+    # name. Below maps the VpiHandle type to VpiHandle in Nim to distinguish the
+    # type from vpi_handle.
+    of "vpiHandle": sym.name = "VpiHandle"
     # If below substition is not done, nimterop does not infer "PLI_BYTE8 *" type as
     # cstring.
     of "PLI_BYTE8":  sym.name = "cchar"
@@ -53,46 +54,46 @@ cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
 cImport(cSearchPath("veriuser.h"), recurse = true, flags = "-f:ast2") # Mainly for tf_dofinish
 
 # 1800-2009 compatibility
-proc vpi_compare_objects*(object1: vpiHandle; object2: vpiHandle): cint =
+proc vpi_compare_objects*(object1: VpiHandle; object2: VpiHandle): cint =
   return vpi_compare_objects_1800v2009(object1, object2)
 
 proc vpi_control*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl,
                                            impsv_vpi_userHdr, varargs.}
 
-proc vpi_get*(property: cint; obj: vpiHandle): cint =
+proc vpi_get*(property: cint; obj: VpiHandle): cint =
   return vpi_get_1800v2009(property, obj)
 
-proc vpi_get_str*(property: cint; obj: vpiHandle): cstring =
+proc vpi_get_str*(property: cint; obj: VpiHandle): cstring =
   return vpi_get_str_1800v2009(property, obj)
 
-proc vpi_get_value*(expr: vpiHandle; value_p: p_vpi_value) =
+proc vpi_get_value*(expr: VpiHandle; value_p: p_vpi_value) =
   vpi_get_value_1800v2009(expr, value_p)
 
-proc get_vpi_handle*(typ: cint; refHandle: vpiHandle): vpiHandle =
+proc vpi_handle*(typ: cint; refHandle: VpiHandle): VpiHandle =
   return vpi_handle_1800v2009(typ, refHandle)
 
-proc vpi_handle_multi*(typ: cint; refHandle1, refHandle2: vpiHandle): vpiHandle {.importc: "vpi_handle_multi_1800v2009",
+proc vpi_handle_multi*(typ: cint; refHandle1, refHandle2: VpiHandle): VpiHandle {.importc: "vpi_handle_multi_1800v2009",
                                                                                   cdecl, impsv_vpi_userHdr, varargs.}
 
-proc vpi_handle_by_index*(obj: vpiHandle; indx: cint): vpiHandle =
+proc vpi_handle_by_index*(obj: VpiHandle; indx: cint): VpiHandle =
   return vpi_handle_by_index_1800v2009(obj, indx)
 
-proc vpi_handle_by_multi_index*(obj: vpiHandle; num_index: cint; index_array: ptr cint): vpiHandle =
+proc vpi_handle_by_multi_index*(obj: VpiHandle; num_index: cint; index_array: ptr cint): VpiHandle =
   return vpi_handle_by_multi_index_1800v2009(obj, num_index, index_array)
 
-proc vpi_handle_by_name*(name: cstring; scope: vpiHandle): vpiHandle =
+proc vpi_handle_by_name*(name: cstring; scope: VpiHandle): VpiHandle =
   return vpi_handle_by_name_1800v2009(name, scope)
 
-proc vpi_iterate*(typ: cint; refHandle: vpiHandle): vpiHandle =
+proc vpi_iterate*(typ: cint; refHandle: VpiHandle): VpiHandle =
   return vpi_iterate_1800v2009(typ, refHandle)
 
-proc vpi_put_value*(obj: vpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): vpiHandle =
+proc vpi_put_value*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): VpiHandle =
   return vpi_put_value_1800v2009(obj, value_p, time_p, flags)
 
-proc vpi_register_cb*(cb_data_p: p_cb_data): vpiHandle =
+proc vpi_register_cb*(cb_data_p: p_cb_data): VpiHandle =
   return vpi_register_cb_1800v2009(cb_data_p)
 
-proc vpi_scan*(iter: vpiHandle): vpiHandle =
+proc vpi_scan*(iter: VpiHandle): VpiHandle =
   return vpi_scan_1800v2009(iter)
 
 
