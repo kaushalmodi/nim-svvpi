@@ -1,5 +1,5 @@
 task wrap, "Generate Nim wrapper using Nimterop":
-  exec("nim c -d:svGenWrapper --verbosity:0 ./svvpi/svvpi.nim > wrapper/svvpi_wrapper.nim")
+  exec("nim c -d:svGenWrapper --verbosity:0 svvpi.nim > wrapper/svvpi_wrapper.nim")
   # Remove the actual path to svvpi.h.
   exec(r"sed -ri 's|/[^ ]+/([^/]+\.h)|/path/to/\1|g' wrapper/svvpi_wrapper.nim")
   # Remove the time stamp to reduce commit noise.

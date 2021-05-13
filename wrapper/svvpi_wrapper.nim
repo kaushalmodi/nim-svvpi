@@ -2,7 +2,7 @@
 # Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl
 # Importing /path/to/sv_vpi_user.h
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_225075350.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_756494141.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_225075350.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_1710218288.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'
@@ -1217,7 +1217,7 @@ proc vpi_register_assertion_cb*(assertion: VpiHandle; reason: cint;
 
 # Importing /path/to/veriuser.h
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_259579795.nim /path/to/veriuser.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_2833027461.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_259579795.nim /path/to/veriuser.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_3793827918.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'

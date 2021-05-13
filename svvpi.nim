@@ -14,6 +14,7 @@ static:
   doAssert fileExists(includePath / "sv_vpi_user.h")
   doAssert fileExists(includePath / "vpi_user.h")
   doAssert fileExists(includePath / "vpi_compatibility.h")
+  doAssert fileExists(includePath / "veriuser.h")
   # Put cAddSearchDir in static block: https://github.com/nimterop/nimterop/issues/122
   cAddSearchDir(includePath)
 
@@ -53,11 +54,6 @@ cOverride:
 cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
 cImport(cSearchPath("veriuser.h"), recurse = true, flags = "-f:ast2") # Mainly for tf_dofinish
 
-proc vpiQuit*(finishArg = 1) =
-  # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
-  # vpi_control doesn't seem to work
-  # discard vpi_control(vpiFinish, finishArg)
-  discard tf_dofinish()
 
 # 1800-2009 compatibility
 proc vpi_compare_objects*(object1: VpiHandle; object2: VpiHandle): cint =
@@ -102,9 +98,15 @@ proc vpi_register_cb*(cb_data_p: p_cb_data): VpiHandle =
 proc vpi_scan*(iter: VpiHandle): VpiHandle =
   return vpi_scan_1800v2009(iter)
 
+when appType == "lib":
+  proc vpiQuit*(finishArg = 1) =
+    # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
+    # vpi_control doesn't seem to work
+    # discard vpi_control(vpiFinish, finishArg)
+    discard tf_dofinish()
 
-proc vpiEcho*(format: string): cint {.discardable.} =
-  return vpi_printf(format & "\n")
+  proc vpiEcho*(format: string): cint {.discardable.} =
+    return vpi_printf(format & "\n")
 
 # https://forum.nim-lang.org/t/7945#50584
 # User code must call this template at global scope, and only once!
