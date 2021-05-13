@@ -51,9 +51,12 @@ cOverride:
     vpiArrayNet* = vpiNetArray
     vpiInterfaceDecl* = vpiVirtualInterfaceVar
 
-cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
-cImport(cSearchPath("veriuser.h"), recurse = true, flags = "-f:ast2") # Mainly for tf_dofinish
+# https://github.com/nimterop/nimterop#header-vs-dynlib
+#   With --noHeader, types will be pure Nim and procs will be just {.importc.}.
+cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "--noHeader -f:ast2")
 
+# cImport(cSearchPath("veriuser.h"), recurse = true, flags = "--noHeader -f:ast2") # Mainly for tf_dofinish
+proc tf_dofinish*(): cint {.importc, cdecl.}
 
 proc vpiEcho*(format: string): cint {.discardable.} =
   return vpi_printf(format & "\n")
@@ -65,66 +68,60 @@ template nilHandleCheck*(handle: VpiHandle; str: string) =
     return
 
 
-# See https://github.com/nim-lang/Nim/issues/18006 on why I chose to
-# use camelCased identifiers below.
-
 # 1800-2009 compatibility
-proc vpiCompareObjects*(object1: VpiHandle; object2: VpiHandle): cint =
+proc vpi_compare_objects*(object1: VpiHandle; object2: VpiHandle): cint =
   return vpi_compare_objects_1800v2009(object1, object2)
 
-proc vpiControl*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl,
-                                          impsv_vpi_userHdr, varargs.}
+proc vpi_control*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl, varargs.}
 
 proc vpiQuit*(finishArg = 1) =
   # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
   # vpi_control doesn't seem to work
-  # discard vpiControl(vpiFinish, finishArg)
+  # discard vpi_control(vpiFinish, finishArg)
   discard tf_dofinish()
 
-proc vpiGet*(property: cint; obj: VpiHandle): cint {.exportc, dynlib.} =
-  obj.nilHandleCheck("vpiGet")
+proc vpi_get*(property: cint; obj: VpiHandle): cint {.exportc, dynlib.} =
+  obj.nilHandleCheck("vpi_get")
   return vpi_get_1800v2009(property, obj)
 
-proc vpiGetStr*(property: cint; obj: VpiHandle): cstring {.exportc, dynlib.} =
-  obj.nilHandleCheck("vpiGetStr")
+proc vpi_get_str*(property: cint; obj: VpiHandle): cstring {.exportc, dynlib.} =
+  obj.nilHandleCheck("vpi_get_str")
   let
     # Create a copy of the string on Nim side.
     ret = $vpi_get_str_1800v2009(property, obj)
   return ret.cstring
 
-proc vpiGetValue*(expr: VpiHandle; value_p: p_vpi_value) =
+proc vpi_get_value*(expr: VpiHandle; value_p: p_vpi_value) =
   vpi_get_value_1800v2009(expr, value_p)
 
-# Below proc is exported and so it cannot be named as vpiHandle, because it then
-# clashes during gcc compilation with the vpiHandle typedef in "vpi_user.h".
-proc getVpiHandle*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
+proc vpi_handle*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_handle_1800v2009(typ, refHandle)
 
-proc vpiHandleMulti*(typ: cint; refHandle1, refHandle2: VpiHandle): VpiHandle {.importc: "vpi_handle_multi_1800v2009",
-                                                                                cdecl, impsv_vpi_userHdr, varargs.}
+proc vpi_handle_multi*(typ: cint; refHandle1, refHandle2: VpiHandle): VpiHandle {.importc: "vpi_handle_multi_1800v2009",
+                                                                                  cdecl, varargs.}
 
-proc vpiHandleByIndex*(obj: VpiHandle; indx: cint): VpiHandle =
+proc vpi_handle_by_index*(obj: VpiHandle; indx: cint): VpiHandle =
   return vpi_handle_by_index_1800v2009(obj, indx)
 
-proc vpiHandleByMultiIndex*(obj: VpiHandle; num_index: cint; index_array: ptr cint): VpiHandle =
+proc vpi_handle_by_multiIndex*(obj: VpiHandle; num_index: cint; index_array: ptr cint): VpiHandle =
   return vpi_handle_by_multi_index_1800v2009(obj, num_index, index_array)
 
-proc vpiIterate*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
+proc vpi_iterate*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_iterate_1800v2009(typ, refHandle)
 
-proc vpiPutValue*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): VpiHandle =
+proc vpi_put_value*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): VpiHandle =
   return vpi_put_value_1800v2009(obj, value_p, time_p, flags)
 
-proc vpiRegisterCb*(cb_data_p: p_cb_data): VpiHandle =
+proc vpi_register_cb*(cb_data_p: p_cb_data): VpiHandle =
   return vpi_register_cb_1800v2009(cb_data_p)
 
-proc vpiScan*(iter: VpiHandle): VpiHandle {.exportc, dynlib.} =
+proc vpi_scan*(iter: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_scan_1800v2009(iter)
 
-proc vpiHandleByName*(name: cstring; scope: VpiHandle): VpiHandle {.exportc, dynlib.} =
+proc vpi_handle_by_name*(name: cstring; scope: VpiHandle): VpiHandle {.exportc, dynlib.} =
   result = vpi_handle_by_name_1800v2009(name, scope)
   if result == nil:
-    vpiEcho &"Error: vpiHandleByName: Cannot find an object by name '{name}'"
+    vpiEcho &"Error: vpi_handleByName: Cannot find an object by name '{name}'"
     vpiQuit()
 
 

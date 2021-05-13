@@ -6,13 +6,13 @@ proc vpiGetValue*[T](handle: VpiHandle; format: cint): T =
 
   var
     v = s_vpi_value(format: format)
-  vpiGetValue(handle, addr v)
+  vpi_get_value(handle, addr v)
 
   case format
   of vpiIntVal: return v.value.integer.T
   else: discard
 
-proc vpiGetIntValue*(handle: VpiHandle): cint {.exportc, dynlib.} =
+proc vpi_get_int_value*(handle: VpiHandle): cint {.exportc, dynlib.} =
   return vpiGetValue[cint](handle, vpiIntVal)
 
 proc vpiPutValue*[T](handle: VpiHandle; format: cint; value: T) =
@@ -25,7 +25,7 @@ proc vpiPutValue*[T](handle: VpiHandle; format: cint; value: T) =
   of vpiIntVal: v.value.integer = value
   else: discard
 
-  discard vpiPutValue(handle, addr v, nil, vpiNoDelay)
+  discard vpi_put_value(handle, addr v, nil, vpiNoDelay)
 
-proc vpiPutIntValue*(handle: VpiHandle; value: cint) {.exportc, dynlib.} =
+proc vpi_put_int_value*(handle: VpiHandle; value: cint) {.exportc, dynlib.} =
   vpiPutValue[cint](handle, vpiIntVal, value)

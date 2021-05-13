@@ -2,7 +2,7 @@
 # Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl
 # Importing /path/to/sv_vpi_user.h
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_225075350.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_1710218288.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --noHeader -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_225075350.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_3621668425.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'
@@ -27,8 +27,6 @@
 type va_list* {.importc, header:"<stdarg.h>".} = object
 
 
-{.pragma: impsv_vpi_userHdr,
-  header: "/path/to/sv_vpi_user.h".}
 {.experimental: "codeReordering".}
 {.passC: "-DVPI_COMPATIBILITY_VERSION_1800v2009".}
 const
@@ -870,8 +868,8 @@ const
   vpiAssertionSysEnableNonvacuousAction* = 643
   vpiAssertionSysDisableVacuousAction* = 644
 type
-  VpiHandle* {.impsv_vpi_userHdr, importc: "vpiHandle".} = ptr cuint
-  t_vpi_time* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_time".} = object
+  VpiHandle* = ptr cuint
+  t_vpi_time* {.bycopy.} = object
     `type`*: cint ## ```
                 ##   [vpiScaledRealTime, vpiSimTime,
                 ##                                        vpiSuppressTime]
@@ -886,9 +884,9 @@ type
                  ##   for vpiScaledRealTime
                  ## ```
   
-  s_vpi_time* {.importc, impsv_vpi_userHdr.} = t_vpi_time
-  p_vpi_time* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_time
-  t_vpi_delay* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_delay".} = object
+  s_vpi_time* = t_vpi_time
+  p_vpi_time* = ptr t_vpi_time
+  t_vpi_delay* {.bycopy.} = object
     da*: ptr t_vpi_time ## ```
                      ##   pointer to application-allocated
                      ##                                       array of delay values
@@ -910,9 +908,9 @@ type
                       ##   true for pulsere values
                       ## ```
   
-  s_vpi_delay* {.importc, impsv_vpi_userHdr.} = t_vpi_delay
-  p_vpi_delay* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_delay
-  t_vpi_vecval* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_vecval".} = object
+  s_vpi_delay* = t_vpi_delay
+  p_vpi_delay* = ptr t_vpi_delay
+  t_vpi_vecval* {.bycopy.} = object
     aval*: cuint               ## ```
                ##   bit encoding: ab: 00=0, 10=1, 11=X, 01=Z
                ## ```
@@ -920,10 +918,9 @@ type
                ##   bit encoding: ab: 00=0, 10=1, 11=X, 01=Z
                ## ```
   
-  s_vpi_vecval* {.importc, impsv_vpi_userHdr.} = t_vpi_vecval
-  p_vpi_vecval* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_vecval
-  t_vpi_strengthval* {.bycopy, impsv_vpi_userHdr,
-                      importc: "struct t_vpi_strengthval".} = object
+  s_vpi_vecval* = t_vpi_vecval
+  p_vpi_vecval* = ptr t_vpi_vecval
+  t_vpi_strengthval* {.bycopy.} = object
     logic*: cint               ## ```
                ##   vpi[0,1,X,Z]
                ## ```
@@ -934,13 +931,12 @@ type
             ##   refer to strength coding below
             ## ```
   
-  s_vpi_strengthval* {.importc, impsv_vpi_userHdr.} = t_vpi_strengthval
-  p_vpi_strengthval* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_strengthval
-  Union_sv_vpi_userh1* {.union, bycopy, impsv_vpi_userHdr,
-                        importc: "union Union_sv_vpi_userh1".} = object ## ```
-                                                                    ##   vpi[[Bin,Oct,Dec,Hex]Str,Scalar,Int,Real,String,
-                                                                    ##                              Vector,Strength,Suppress,Time,ObjType]Val
-                                                                    ## ```
+  s_vpi_strengthval* = t_vpi_strengthval
+  p_vpi_strengthval* = ptr t_vpi_strengthval
+  Union_sv_vpi_userh1* {.union, bycopy.} = object ## ```
+                                             ##   vpi[[Bin,Oct,Dec,Hex]Str,Scalar,Int,Real,String,
+                                             ##                              Vector,Strength,Suppress,Time,ObjType]Val
+                                             ## ```
     str*: cstring              ## ```
                 ##   string value
                 ## ```
@@ -966,7 +962,7 @@ type
                  ##   ...other
                  ## ```
   
-  t_vpi_value* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_value".} = object
+  t_vpi_value* {.bycopy.} = object
     format*: cint ## ```
                 ##   vpi[[Bin,Oct,Dec,Hex]Str,Scalar,Int,Real,String,
                 ##                              Vector,Strength,Suppress,Time,ObjType]Val
@@ -976,12 +972,11 @@ type
                               ##                              Vector,Strength,Suppress,Time,ObjType]Val
                               ## ```
   
-  s_vpi_value* {.importc, impsv_vpi_userHdr.} = t_vpi_value
-  p_vpi_value* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_value
-  Union_sv_vpi_userh2* {.union, bycopy, impsv_vpi_userHdr,
-                        importc: "union Union_sv_vpi_userh2".} = object ## ```
-                                                                    ##   array bit flags- vpiUserAllocFlag
-                                                                    ## ```
+  s_vpi_value* = t_vpi_value
+  p_vpi_value* = ptr t_vpi_value
+  Union_sv_vpi_userh2* {.union, bycopy.} = object ## ```
+                                             ##   array bit flags- vpiUserAllocFlag
+                                             ## ```
     integers*: ptr cint         ## ```
                      ##   integer values
                      ## ```
@@ -1007,7 +1002,7 @@ type
                          ##   short real values
                          ## ```
   
-  t_vpi_arrayvalue* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_arrayvalue".} = object
+  t_vpi_arrayvalue* {.bycopy.} = object
     format*: cuint ## ```
                  ##   vpi[Int,Real,Time,ShortInt,LongInt,ShortReal,
                  ##                             RawTwoState,RawFourState]Val
@@ -1019,9 +1014,9 @@ type
                               ##   array bit flags- vpiUserAllocFlag
                               ## ```
   
-  s_vpi_arrayvalue* {.importc, impsv_vpi_userHdr.} = t_vpi_arrayvalue
-  p_vpi_arrayvalue* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_arrayvalue
-  t_vpi_systf_data* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_systf_data".} = object
+  s_vpi_arrayvalue* = t_vpi_arrayvalue
+  p_vpi_arrayvalue* = ptr t_vpi_arrayvalue
+  t_vpi_systf_data* {.bycopy.} = object
     `type`*: cint              ## ```
                 ##   vpiSysTask, vpiSysFunc
                 ## ```
@@ -1043,17 +1038,17 @@ type
                       ##   for sized function callbacks only
                       ## ```
   
-  s_vpi_systf_data* {.importc, impsv_vpi_userHdr.} = t_vpi_systf_data
-  p_vpi_systf_data* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_systf_data
-  t_vpi_vlog_info* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_vlog_info".} = object
+  s_vpi_systf_data* = t_vpi_systf_data
+  p_vpi_systf_data* = ptr t_vpi_systf_data
+  t_vpi_vlog_info* {.bycopy.} = object
     argc*: cint
     argv*: ptr cstring
     product*: cstring
     version*: cstring
 
-  s_vpi_vlog_info* {.importc, impsv_vpi_userHdr.} = t_vpi_vlog_info
-  p_vpi_vlog_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_vlog_info
-  t_vpi_error_info* {.bycopy, impsv_vpi_userHdr, importc: "struct t_vpi_error_info".} = object
+  s_vpi_vlog_info* = t_vpi_vlog_info
+  p_vpi_vlog_info* = ptr t_vpi_vlog_info
+  t_vpi_error_info* {.bycopy.} = object
     state*: cint               ## ```
                ##   vpi[Compile,PLI,Run]
                ## ```
@@ -1068,9 +1063,9 @@ type
     file*: cstring
     line*: cint
 
-  s_vpi_error_info* {.importc, impsv_vpi_userHdr.} = t_vpi_error_info
-  p_vpi_error_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_error_info
-  t_cb_data* {.bycopy, impsv_vpi_userHdr, importc: "struct t_cb_data".} = object
+  s_vpi_error_info* = t_vpi_error_info
+  p_vpi_error_info* = ptr t_vpi_error_info
+  t_cb_data* {.bycopy.} = object
     reason*: cint              ## ```
                 ##   callback reason
                 ## ```
@@ -1095,10 +1090,9 @@ type
                       ##                                                    var select that changed
                       ## ```
   
-  s_cb_data* {.importc, impsv_vpi_userHdr.} = t_cb_data
-  p_cb_data* {.importc, impsv_vpi_userHdr.} = ptr t_cb_data
-  t_vpi_assertion_step_info* {.bycopy, impsv_vpi_userHdr,
-                              importc: "struct t_vpi_assertion_step_info".} = object
+  s_cb_data* = t_cb_data
+  p_cb_data* = ptr t_cb_data
+  t_vpi_assertion_step_info* {.bycopy.} = object
     matched_expression_count*: cint
     matched_exprs*: ptr VpiHandle ## ```
                                ##   array of expressions
@@ -1110,454 +1104,84 @@ type
                  ##   identify transition
                  ## ```
   
-  s_vpi_assertion_step_info* {.importc, impsv_vpi_userHdr.} = t_vpi_assertion_step_info
-  p_vpi_assertion_step_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_assertion_step_info
-  Union_sv_vpi_userh3* {.union, bycopy, impsv_vpi_userHdr,
-                        importc: "union Union_sv_vpi_userh3".} = object
+  s_vpi_assertion_step_info* = t_vpi_assertion_step_info
+  p_vpi_assertion_step_info* = ptr t_vpi_assertion_step_info
+  Union_sv_vpi_userh3* {.union, bycopy.} = object
     failExpr*: VpiHandle
     step*: p_vpi_assertion_step_info
 
-  t_vpi_attempt_info* {.bycopy, impsv_vpi_userHdr,
-                       importc: "struct t_vpi_attempt_info".} = object
+  t_vpi_attempt_info* {.bycopy.} = object
     detail*: Union_sv_vpi_userh3
     attemptStartTime*: s_vpi_time ## ```
                                 ##   Time attempt triggered
                                 ## ```
   
-  s_vpi_attempt_info* {.importc, impsv_vpi_userHdr.} = t_vpi_attempt_info
-  p_vpi_attempt_info* {.importc, impsv_vpi_userHdr.} = ptr t_vpi_attempt_info
-  vpi_assertion_callback_func* {.importc, impsv_vpi_userHdr.} = proc (reason: cint;
-      cb_time: p_vpi_time; assertion: VpiHandle; info: p_vpi_attempt_info;
-      user_data: cstring): cint {.cdecl.}
-proc vpi_register_cb_1800v2009*(cb_data_p: p_cb_data): VpiHandle {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_remove_cb*(cb_obj: VpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_get_cb_info*(`object`: VpiHandle; cb_data_p: p_cb_data) {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_register_systf*(systf_data_p: p_vpi_systf_data): VpiHandle {.importc, cdecl,
-    impsv_vpi_userHdr.}
+  s_vpi_attempt_info* = t_vpi_attempt_info
+  p_vpi_attempt_info* = ptr t_vpi_attempt_info
+  vpi_assertion_callback_func* = proc (reason: cint; cb_time: p_vpi_time;
+                                    assertion: VpiHandle;
+                                    info: p_vpi_attempt_info; user_data: cstring): cint {.
+      cdecl.}
+proc vpi_register_cb_1800v2009*(cb_data_p: p_cb_data): VpiHandle {.importc, cdecl.}
+proc vpi_remove_cb*(cb_obj: VpiHandle): cint {.importc, cdecl.}
+proc vpi_get_cb_info*(`object`: VpiHandle; cb_data_p: p_cb_data) {.importc, cdecl.}
+proc vpi_register_systf*(systf_data_p: p_vpi_systf_data): VpiHandle {.importc, cdecl.}
 proc vpi_get_systf_info*(`object`: VpiHandle; systf_data_p: p_vpi_systf_data) {.
-    importc, cdecl, impsv_vpi_userHdr.}
+    importc, cdecl.}
 proc vpi_handle_by_name_1800v2009*(name: cstring; scope: VpiHandle): VpiHandle {.
-    importc, cdecl, impsv_vpi_userHdr.}
+    importc, cdecl.}
 proc vpi_handle_by_index_1800v2009*(`object`: VpiHandle; indx: cint): VpiHandle {.
-    importc, cdecl, impsv_vpi_userHdr.}
+    importc, cdecl.}
 proc vpi_handle_1800v2009*(`type`: cint; refHandle: VpiHandle): VpiHandle {.importc,
-    cdecl, impsv_vpi_userHdr.}
+    cdecl.}
 proc vpi_handle_multi_1800v2009*(`type`: cint; refHandle1: VpiHandle;
                                 refHandle2: VpiHandle): VpiHandle {.importc, cdecl,
-    impsv_vpi_userHdr, varargs.}
+    varargs.}
 proc vpi_iterate_1800v2009*(`type`: cint; refHandle: VpiHandle): VpiHandle {.importc,
-    cdecl, impsv_vpi_userHdr.}
-proc vpi_scan_1800v2009*(`iterator`: VpiHandle): VpiHandle {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_get_1800v2009*(property: cint; `object`: VpiHandle): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_get64*(property: cint; `object`: VpiHandle): clonglong {.importc, cdecl,
-    impsv_vpi_userHdr.}
+    cdecl.}
+proc vpi_scan_1800v2009*(`iterator`: VpiHandle): VpiHandle {.importc, cdecl.}
+proc vpi_get_1800v2009*(property: cint; `object`: VpiHandle): cint {.importc, cdecl.}
+proc vpi_get64*(property: cint; `object`: VpiHandle): clonglong {.importc, cdecl.}
 proc vpi_get_str_1800v2009*(property: cint; `object`: VpiHandle): cstring {.importc,
-    cdecl, impsv_vpi_userHdr.}
-proc vpi_get_delays*(`object`: VpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_put_delays*(`object`: VpiHandle; delay_p: p_vpi_delay) {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_get_value_1800v2009*(expr: VpiHandle; value_p: p_vpi_value) {.importc, cdecl,
-    impsv_vpi_userHdr.}
+    cdecl.}
+proc vpi_get_delays*(`object`: VpiHandle; delay_p: p_vpi_delay) {.importc, cdecl.}
+proc vpi_put_delays*(`object`: VpiHandle; delay_p: p_vpi_delay) {.importc, cdecl.}
+proc vpi_get_value_1800v2009*(expr: VpiHandle; value_p: p_vpi_value) {.importc, cdecl.}
 proc vpi_put_value_1800v2009*(`object`: VpiHandle; value_p: p_vpi_value;
                              time_p: p_vpi_time; flags: cint): VpiHandle {.importc,
-    cdecl, impsv_vpi_userHdr.}
+    cdecl.}
 proc vpi_get_value_array*(`object`: VpiHandle; arrayvalue_p: p_vpi_arrayvalue;
-                         index_p: ptr cint; num: cuint) {.importc, cdecl,
-    impsv_vpi_userHdr.}
+                         index_p: ptr cint; num: cuint) {.importc, cdecl.}
 proc vpi_put_value_array*(`object`: VpiHandle; arrayvalue_p: p_vpi_arrayvalue;
-                         index_p: ptr cint; num: cuint) {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_get_time*(`object`: VpiHandle; time_p: p_vpi_time) {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_mcd_open*(fileName: cstring): cuint {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_mcd_close*(mcd: cuint): cuint {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_mcd_name*(cd: cuint): cstring {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_mcd_printf*(mcd: cuint; format: cstring): cint {.importc, cdecl,
-    impsv_vpi_userHdr, varargs.}
-proc vpi_printf*(format: cstring): cint {.importc, cdecl, impsv_vpi_userHdr, varargs.}
+                         index_p: ptr cint; num: cuint) {.importc, cdecl.}
+proc vpi_get_time*(`object`: VpiHandle; time_p: p_vpi_time) {.importc, cdecl.}
+proc vpi_mcd_open*(fileName: cstring): cuint {.importc, cdecl.}
+proc vpi_mcd_close*(mcd: cuint): cuint {.importc, cdecl.}
+proc vpi_mcd_name*(cd: cuint): cstring {.importc, cdecl.}
+proc vpi_mcd_printf*(mcd: cuint; format: cstring): cint {.importc, cdecl, varargs.}
+proc vpi_printf*(format: cstring): cint {.importc, cdecl, varargs.}
 proc vpi_compare_objects_1800v2009*(object1: VpiHandle; object2: VpiHandle): cint {.
-    importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_chk_error*(error_info_p: p_vpi_error_info): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_free_object*(`object`: VpiHandle): cint {.importc, cdecl, impsv_vpi_userHdr.}
+    importc, cdecl.}
+proc vpi_chk_error*(error_info_p: p_vpi_error_info): cint {.importc, cdecl.}
+proc vpi_free_object*(`object`: VpiHandle): cint {.importc, cdecl.}
   ## ```
   ##   vpi_free_object() is deprecated in 1800-2009
   ## ```
-proc vpi_release_handle*(`object`: VpiHandle): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_get_vlog_info*(vlog_info_p: p_vpi_vlog_info): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_get_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_put_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_get_userdata*(obj: VpiHandle): pointer {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_put_userdata*(obj: VpiHandle; userdata: pointer): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_vprintf*(format: cstring; ap: va_list): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_mcd_vprintf*(mcd: cuint; format: cstring; ap: va_list): cint {.importc, cdecl,
-    impsv_vpi_userHdr.}
-proc vpi_flush*(): cint {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_mcd_flush*(mcd: cuint): cint {.importc, cdecl, impsv_vpi_userHdr.}
-proc vpi_control_1800v2009*(operation: cint): cint {.importc, cdecl,
-    impsv_vpi_userHdr, varargs.}
+proc vpi_release_handle*(`object`: VpiHandle): cint {.importc, cdecl.}
+proc vpi_get_vlog_info*(vlog_info_p: p_vpi_vlog_info): cint {.importc, cdecl.}
+proc vpi_get_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc, cdecl.}
+proc vpi_put_data*(id: cint; dataLoc: cstring; numOfBytes: cint): cint {.importc, cdecl.}
+proc vpi_get_userdata*(obj: VpiHandle): pointer {.importc, cdecl.}
+proc vpi_put_userdata*(obj: VpiHandle; userdata: pointer): cint {.importc, cdecl.}
+proc vpi_vprintf*(format: cstring; ap: va_list): cint {.importc, cdecl.}
+proc vpi_mcd_vprintf*(mcd: cuint; format: cstring; ap: va_list): cint {.importc, cdecl.}
+proc vpi_flush*(): cint {.importc, cdecl.}
+proc vpi_mcd_flush*(mcd: cuint): cint {.importc, cdecl.}
+proc vpi_control_1800v2009*(operation: cint): cint {.importc, cdecl, varargs.}
 proc vpi_handle_by_multi_index_1800v2009*(obj: VpiHandle; num_index: cint;
-    index_array: ptr cint): VpiHandle {.importc, cdecl, impsv_vpi_userHdr.}
+    index_array: ptr cint): VpiHandle {.importc, cdecl.}
 proc vpi_register_assertion_cb*(assertion: VpiHandle; reason: cint;
                                cb_rtn: ptr vpi_assertion_callback_func;
-                               user_data: cstring): VpiHandle {.importc, cdecl,
-    impsv_vpi_userHdr.}
-{.pop.}
-
-# Importing /path/to/veriuser.h
-# Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_259579795.nim /path/to/veriuser.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_3793827918.nim
-
-# const 'PLI_VEXTERN' has unsupported value 'extern'
-# const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'
-# const 'EETERN' has unsupported value 'PLI_EXTERN PLI_DLLESPEC'
-# const 'bool' has unsupported value 'int'
-# const 'REASON_CHECKTF' has unsupported value 'reason_checktf'
-# const 'REASON_SIZETF' has unsupported value 'reason_sizetf'
-# const 'REASON_CALLTF' has unsupported value 'reason_calltf'
-# const 'REASON_SAVE' has unsupported value 'reason_save'
-# const 'REASON_RESTART' has unsupported value 'reason_restart'
-# const 'REASON_DISABLE' has unsupported value 'reason_disable'
-# const 'REASON_PARAMVC' has unsupported value 'reason_paramvc'
-# const 'REASON_SYNCH' has unsupported value 'reason_synch'
-# const 'REASON_FINISH' has unsupported value 'reason_finish'
-# const 'REASON_REACTIVATE' has unsupported value 'reason_reactivate'
-# const 'REASON_ROSYNCH' has unsupported value 'reason_rosynch'
-# const 'REASON_PARAMDRC' has unsupported value 'reason_paramdrc'
-# const 'REASON_ENDOFCOMPILE' has unsupported value 'reason_endofcompile'
-# const 'REASON_SCOPE' has unsupported value 'reason_scope'
-# const 'REASON_INTERACTIVE' has unsupported value 'reason_interactive'
-# const 'REASON_RESET' has unsupported value 'reason_reset'
-# const 'REASON_ENDOFRESET' has unsupported value 'reason_endofreset'
-# const 'REASON_FORCE' has unsupported value 'reason_force'
-# const 'REASON_RELEASE' has unsupported value 'reason_release'
-# const 'TF_NULLPARAM' has unsupported value 'tf_nullparam'
-# const 'TF_READONLY' has unsupported value 'tf_readonly'
-# const 'TF_READWRITE' has unsupported value 'tf_readwrite'
-# const 'TF_RWBITSELECT' has unsupported value 'tf_rwbitselect'
-# const 'TF_RWPARTSELECT' has unsupported value 'tf_rwpartselect'
-# const 'TF_RWMEMSELECT' has unsupported value 'tf_rwmemselect'
-# const 'TF_READONLYREAL' has unsupported value 'tf_readonlyreal'
-# const 'TF_READWRITEREAL' has unsupported value 'tf_readwritereal'
-# const 'TF_NULL_NODE' has unsupported value 'tf_null_node'
-# const 'TF_REG_NODE' has unsupported value 'tf_reg_node'
-# const 'TF_INTEGER_NODE' has unsupported value 'tf_integer_node'
-# const 'TF_TIME_NODE' has unsupported value 'tf_time_node'
-# const 'TF_NETVECTOR_NODE' has unsupported value 'tf_netvector_node'
-# const 'TF_NETSCALAR_NODE' has unsupported value 'tf_netscalar_node'
-# const 'TF_MEMORY_NODE' has unsupported value 'tf_memory_node'
-# const 'TF_REAL_NODE' has unsupported value 'tf_real_node'
-{.push hint[ConvFromXtoItselfNotNeeded]: off.}
-
-
-{.pragma: impveriuserHdr,
-  header: "/path/to/veriuser.h".}
-{.experimental: "codeReordering".}
-{.passC: "-DVPI_COMPATIBILITY_VERSION_1800v2009".}
-const
-  PLI_EXTRAS* = 1
-  TRUE* = 1
-  FALSE* = 0
-  true* = 1
-  false* = 0
-  null* = 0'i32
-  ERR_MESSAGE* = 1
-  ERR_WARNING* = 2
-  ERR_ERROR* = 3
-  ERR_INTERNAL* = 4
-  ERR_SYSTEM* = 5
-  reason_checktf* = 1
-  reason_sizetf* = 2
-  reason_calltf* = 3
-  reason_save* = 4
-  reason_restart* = 5
-  reason_disable* = 6
-  reason_paramvc* = 7
-  reason_synch* = 8
-  reason_finish* = 9
-  reason_reactivate* = 10
-  reason_rosynch* = 11
-  reason_paramdrc* = 15
-  reason_endofcompile* = 16
-  reason_scope* = 17
-  reason_interactive* = 18
-  reason_reset* = 19
-  reason_endofreset* = 20
-  reason_force* = 21
-  reason_release* = 22
-  reason_startofsave* = 27
-  reason_startofrestart* = 28
-  REASON_MAX* = 28
-  tf_nullparam* = 0
-  tf_string* = 1
-  TF_STRING* = tf_string
-  tf_readonly* = 10
-  tf_readwrite* = 11
-  tf_rwbitselect* = 12
-  tf_rwpartselect* = 13
-  tf_rwmemselect* = 14
-  tf_readonlyreal* = 15
-  tf_readwritereal* = 16
-  tf_null_node* = 100
-  tf_reg_node* = 101
-  tf_integer_node* = 102
-  tf_time_node* = 103
-  tf_netvector_node* = 104
-  tf_netscalar_node* = 105
-  tf_memory_node* = 106
-  tf_real_node* = 107
-type
-  t_tfexprinfo* {.bycopy, impveriuserHdr, importc: "struct t_tfexprinfo".} = object ## ```
-                                                                             ##   ---------------------------------------------------------------------------
-                                                                             ##     -------------------------- structure definitions --------------------------
-                                                                             ##     ---------------------------------------------------------------------------
-                                                                             ##     ----- structure used with tf_exprinfo() to get expression information -----
-                                                                             ## ```
-    expr_type*: cshort
-    padding*: cshort
-    expr_value_p*: ptr t_vecval
-    real_value*: cdouble
-    expr_string*: cstring
-    expr_ngroups*: cint
-    expr_vec_size*: cint
-    expr_sign*: cint
-    expr_lhs_select*: cint
-    expr_rhs_select*: cint
-
-  s_tfexprinfo* {.importc, impveriuserHdr.} = t_tfexprinfo ## ```
-                                                      ##   ---------------------------------------------------------------------------
-                                                      ##     -------------------------- structure definitions --------------------------
-                                                      ##     ---------------------------------------------------------------------------
-                                                      ##     ----- structure used with tf_exprinfo() to get expression information -----
-                                                      ## ```
-  p_tfexprinfo* {.importc, impveriuserHdr.} = ptr t_tfexprinfo ## ```
-                                                         ##   ---------------------------------------------------------------------------
-                                                         ##     -------------------------- structure definitions --------------------------
-                                                         ##     ---------------------------------------------------------------------------
-                                                         ##     ----- structure used with tf_exprinfo() to get expression information -----
-                                                         ## ```
-  Union_veriuserh1* {.union, bycopy, impveriuserHdr,
-                     importc: "union Union_veriuserh1".} = object
-    vecval_p*: ptr t_vecval
-    strengthval_p*: ptr t_strengthval
-    memoryval_p*: cstring
-    real_val_p*: ptr cdouble
-
-  t_tfnodeinfo* {.bycopy, impveriuserHdr, importc: "struct t_tfnodeinfo".} = object ## ```
-                                                                             ##   ------- structure for use with tf_nodeinfo() to get node information ------
-                                                                             ## ```
-    node_type*: cshort
-    padding*: cshort
-    node_value*: Union_veriuserh1
-    node_symbol*: cstring
-    node_ngroups*: cint
-    node_vec_size*: cint
-    node_sign*: cint
-    node_ms_index*: cint
-    node_ls_index*: cint
-    node_mem_size*: cint
-    node_lhs_element*: cint
-    node_rhs_element*: cint
-    node_handle*: ptr cint
-
-  s_tfnodeinfo* {.importc, impveriuserHdr.} = t_tfnodeinfo ## ```
-                                                      ##   ------- structure for use with tf_nodeinfo() to get node information ------
-                                                      ## ```
-  p_tfnodeinfo* {.importc, impveriuserHdr.} = ptr t_tfnodeinfo ## ```
-                                                         ##   ------- structure for use with tf_nodeinfo() to get node information ------
-                                                         ## ```
-  t_vecval* {.bycopy, impveriuserHdr, importc: "struct t_vecval".} = object ## ```
-                                                                     ##   --------------------- data structure of vector values ---------------------
-                                                                     ## ```
-    avalbits*: cint
-    bvalbits*: cint
-
-  s_vecval* {.importc, impveriuserHdr.} = t_vecval ## ```
-                                              ##   --------------------- data structure of vector values ---------------------
-                                              ## ```
-  p_vecval* {.importc, impveriuserHdr.} = ptr t_vecval ## ```
-                                                 ##   --------------------- data structure of vector values ---------------------
-                                                 ## ```
-  t_strengthval* {.bycopy, impveriuserHdr, importc: "struct t_strengthval".} = object ## ```
-                                                                               ##   --------------- data structure of scalar net strength values --------------
-                                                                               ## ```
-    strength0*: cint
-    strength1*: cint
-
-  s_strengthval* {.importc, impveriuserHdr.} = t_strengthval ## ```
-                                                        ##   --------------- data structure of scalar net strength values --------------
-                                                        ## ```
-  p_strengthval* {.importc, impveriuserHdr.} = ptr t_strengthval ## ```
-                                                           ##   --------------- data structure of scalar net strength values --------------
-                                                           ## ```
-var veriuser_version_str* {.importc, impveriuserHdr.}: cstring
-proc io_mcdprintf*(mcd: cint; format: cstring) {.importc, cdecl, impveriuserHdr, varargs.}
-proc io_printf*(format: cstring) {.importc, cdecl, impveriuserHdr, varargs.}
-proc mc_scan_plusargs*(plusarg: cstring): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_add_long*(aof_lowtime1: ptr cint; aof_hightime1: ptr cint; lowtime2: cint;
-                 hightime2: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_asynchoff*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_asynchon*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_clearalldelays*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_compare_long*(low1: cuint; high1: cuint; low2: cuint; high2: cuint): cint {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_copypvc_flag*(nparam: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_divide_long*(aof_low1: ptr cint; aof_high1: ptr cint; low2: cint; high2: cint) {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_dofinish*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_dostop*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_error*(fmt: cstring): cint {.importc, cdecl, impveriuserHdr, varargs.}
-proc tf_evaluatep*(pnum: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_exprinfo*(pnum: cint; pinfo: p_tfexprinfo): p_tfexprinfo {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_getcstringp*(nparam: cint): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_getinstance*(): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_getlongp*(aof_highvalue: ptr cint; pnum: cint): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_getlongtime*(aof_hightime: ptr cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_getnextlongtime*(aof_lowtime: ptr cint; aof_hightime: ptr cint): cint {.importc,
-    cdecl, impveriuserHdr.}
-proc tf_getp*(pnum: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_getpchange*(nparam: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_getrealp*(pnum: cint): cdouble {.importc, cdecl, impveriuserHdr.}
-proc tf_getrealtime*(): cdouble {.importc, cdecl, impveriuserHdr.}
-proc tf_gettime*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_gettimeprecision*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_gettimeunit*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_getworkarea*(): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_iasynchoff*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_iasynchon*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_iclearalldelays*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_icopypvc_flag*(nparam: cint; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_ievaluatep*(pnum: cint; inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_iexprinfo*(pnum: cint; pinfo: p_tfexprinfo; inst: cstring): p_tfexprinfo {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_igetcstringp*(nparam: cint; inst: cstring): cstring {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_igetlongp*(aof_highvalue: ptr cint; pnum: cint; inst: cstring): cint {.importc,
-    cdecl, impveriuserHdr.}
-proc tf_igetlongtime*(aof_hightime: ptr cint; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_igetp*(pnum: cint; inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_igetpchange*(nparam: cint; inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_igetrealp*(pnum: cint; inst: cstring): cdouble {.importc, cdecl, impveriuserHdr.}
-proc tf_igetrealtime*(inst: cstring): cdouble {.importc, cdecl, impveriuserHdr.}
-proc tf_igettime*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_igettimeprecision*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_igettimeunit*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_igetworkarea*(inst: cstring): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_imipname*(cell: cstring): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_imovepvc_flag*(nparam: cint; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_inodeinfo*(pnum: cint; pinfo: p_tfnodeinfo; inst: cstring): p_tfnodeinfo {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_inump*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_ipropagatep*(pnum: cint; inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_iputlongp*(pnum: cint; lowvalue: cint; highvalue: cint; inst: cstring): cint {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_iputp*(pnum: cint; value: cint; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_iputrealp*(pnum: cint; value: cdouble; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_irosynchronize*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_isetdelay*(delay: cint; inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_isetlongdelay*(lowdelay: cint; highdelay: cint; inst: cstring): cint {.importc,
-    cdecl, impveriuserHdr.}
-proc tf_isetrealdelay*(realdelay: cdouble; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_isetworkarea*(workarea: cstring; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_isizep*(pnum: cint; inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_ispname*(cell: cstring): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_istrdelputp*(nparam: cint; bitlength: cint; format_char: cint;
-                    value_p: cstring; delay: cint; delaytype: cint; inst: cstring): cint {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_istrgetp*(pnum: cint; format_char: cint; inst: cstring): cstring {.importc,
-    cdecl, impveriuserHdr.}
-proc tf_istrlongdelputp*(nparam: cint; bitlength: cint; format_char: cint;
-                        value_p: cstring; lowdelay: cint; highdelay: cint;
-                        delaytype: cint; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_istrrealdelputp*(nparam: cint; bitlength: cint; format_char: cint;
-                        value_p: cstring; realdelay: cdouble; delaytype: cint;
-                        inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_isynchronize*(inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_itestpvc_flag*(nparam: cint; inst: cstring): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_itypep*(pnum: cint; inst: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_long_to_real*(int_lo: cint; int_hi: cint; aof_real: ptr cdouble) {.importc,
-    cdecl, impveriuserHdr.}
-proc tf_longtime_tostr*(lowtime: cint; hightime: cint): cstring {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_message*(level: cint; facility: cstring; messno: cstring; message: cstring): cint {.
-    importc, cdecl, impveriuserHdr, varargs.}
-proc tf_mipname*(): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_movepvc_flag*(nparam: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_multiply_long*(aof_low1: ptr cint; aof_high1: ptr cint; low2: cint; high2: cint) {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_nodeinfo*(pnum: cint; pinfo: p_tfnodeinfo): p_tfnodeinfo {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_nump*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_propagatep*(pnum: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_putlongp*(pnum: cint; lowvalue: cint; highvalue: cint): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_putp*(pnum: cint; value: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_putrealp*(pnum: cint; value: cdouble): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_read_restart*(blockptr: cstring; blocklen: cint): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_real_to_long*(real: cdouble; aof_int_lo: ptr cint; aof_int_hi: ptr cint) {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_rosynchronize*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_scale_longdelay*(cell: cstring; delay_lo: cint; delay_hi: cint;
-                        aof_delay_lo: ptr cint; aof_delay_hi: ptr cint) {.importc,
-    cdecl, impveriuserHdr.}
-proc tf_scale_realdelay*(cell: cstring; realdelay: cdouble;
-                        aof_realdelay: ptr cdouble) {.importc, cdecl, impveriuserHdr.}
-proc tf_setdelay*(delay: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_setlongdelay*(lowdelay: cint; highdelay: cint): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_setrealdelay*(realdelay: cdouble): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_setworkarea*(workarea: cstring): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_sizep*(pnum: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_spname*(): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_strdelputp*(nparam: cint; bitlength: cint; format_char: cint; value_p: cstring;
-                   delay: cint; delaytype: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_strgetp*(pnum: cint; format_char: cint): cstring {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_strgettime*(): cstring {.importc, cdecl, impveriuserHdr.}
-proc tf_strlongdelputp*(nparam: cint; bitlength: cint; format_char: cint;
-                       value_p: cstring; lowdelay: cint; highdelay: cint;
-                       delaytype: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_strrealdelputp*(nparam: cint; bitlength: cint; format_char: cint;
-                       value_p: cstring; realdelay: cdouble; delaytype: cint): cint {.
-    importc, cdecl, impveriuserHdr.}
-proc tf_subtract_long*(aof_lowtime1: ptr cint; aof_hightime1: ptr cint; lowtime2: cint;
-                      hightime2: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_synchronize*(): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_testpvc_flag*(nparam: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_text*(fmt: cstring): cint {.importc, cdecl, impveriuserHdr, varargs.}
-proc tf_typep*(pnum: cint): cint {.importc, cdecl, impveriuserHdr.}
-proc tf_unscale_longdelay*(cell: cstring; delay_lo: cint; delay_hi: cint;
-                          aof_delay_lo: ptr cint; aof_delay_hi: ptr cint) {.importc,
-    cdecl, impveriuserHdr.}
-proc tf_unscale_realdelay*(cell: cstring; realdelay: cdouble;
-                          aof_realdelay: ptr cdouble) {.importc, cdecl,
-    impveriuserHdr.}
-proc tf_warning*(fmt: cstring): cint {.importc, cdecl, impveriuserHdr, varargs.}
-proc tf_write_save*(blockptr: cstring; blocklen: cint): cint {.importc, cdecl,
-    impveriuserHdr.}
-proc endofcompile_routines*(): cint {.importc, cdecl, impveriuserHdr.}
+                               user_data: cstring): VpiHandle {.importc, cdecl.}
 {.pop.}
 
