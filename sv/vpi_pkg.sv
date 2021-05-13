@@ -1,4 +1,4 @@
-// Time-stamp: <2021-05-13 09:27:49 kmodi>
+// Time-stamp: <2021-05-13 13:12:56 kmodi>
 //
 // -------------------------------------------------------------------
 // Project            : svvpi
@@ -651,16 +651,16 @@ package vpi_pkg;
                 , cbAtEndOfSimTime = 31
                 } vpi_cb_reason_e;
 
-  typedef chandle vpiHandle;
+  typedef chandle VpiHandle;
 
   // context is needed for calling VPI from DPI imported routines
-  import "DPI-C" context function vpiHandle vpi_handle_by_name(input string name, vpiHandle scope);
-  import "DPI-C" context function vpiHandle vpi_iterate(input vpi_object_type_e obj_type, vpiHandle _ref);
-  import "DPI-C" context function vpiHandle vpi_scan(input vpiHandle itr);
-  import "DPI-C" context function string    vpi_get_str(input vpi_prop_e prop, vpiHandle obj);
-  import "DPI-C" context function vpiHandle vpi_handle(input vpi_methods_e method, vpiHandle obj);
-  import "DPI-C" context function int       vpi_get(input vpi_prop_e prop, vpiHandle handle);
-  import "DPI-C" context function int       vpi_get_int_value(input vpiHandle handle);
-  import "DPI-C" context function void      vpi_put_int_value(input vpiHandle handle, int value);
+  import "DPI-C" context function VpiHandle vpi_handle_by_name(input string name, VpiHandle scope = null /*current scope*/);
+  import "DPI-C" context function VpiHandle vpi_iterate(input vpi_object_type_e obj_type, VpiHandle _ref);
+  import "DPI-C" context function VpiHandle vpi_scan(input VpiHandle itr);
+  import "DPI-C" context function string    vpi_get_str(input vpi_prop_e prop, VpiHandle obj);
+  import "DPI-C" context function VpiHandle vpi_handle(input vpi_methods_e method, VpiHandle obj);
+  import "DPI-C" context function int       vpi_get(input vpi_prop_e prop, VpiHandle handle);
+  import "DPI-C" context function int       vpi_get_value_int(input VpiHandle handle);
+  import "DPI-C" context function void      vpi_put_value_int(input VpiHandle handle, int value);
 
 endpackage : vpi_pkg
