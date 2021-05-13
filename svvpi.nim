@@ -55,12 +55,6 @@ cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
 cImport(cSearchPath("veriuser.h"), recurse = true, flags = "-f:ast2") # Mainly for tf_dofinish
 
 
-proc vpiQuit*(finishArg = 1) =
-  # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
-  # vpi_control doesn't seem to work
-  # discard vpi_control(vpiFinish, finishArg)
-  discard tf_dofinish()
-
 proc vpiEcho*(format: string): cint {.discardable.} =
   return vpi_printf(format & "\n")
 
@@ -80,6 +74,12 @@ proc vpiCompareObjects*(object1: VpiHandle; object2: VpiHandle): cint =
 
 proc vpiControl*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl,
                                           impsv_vpi_userHdr, varargs.}
+
+proc vpiQuit*(finishArg = 1) =
+  # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
+  # vpi_control doesn't seem to work
+  # discard vpiControl(vpiFinish, finishArg)
+  discard tf_dofinish()
 
 proc vpiGet*(property: cint; obj: VpiHandle): cint {.exportc, dynlib.} =
   obj.nilHandleCheck("vpiGet")
