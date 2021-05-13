@@ -1,4 +1,4 @@
-import std/[os, macros, strutils]
+import std/[os, macros, strutils, strformat]
 import nimterop/cimport
 
 when defined(svGenWrapper):
@@ -55,58 +55,64 @@ cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
 cImport(cSearchPath("veriuser.h"), recurse = true, flags = "-f:ast2") # Mainly for tf_dofinish
 
 
+# See https://github.com/nim-lang/Nim/issues/18006 on why I chose to
+# use camelCased identifiers below.
+
 # 1800-2009 compatibility
-proc vpi_compare_objects*(object1: VpiHandle; object2: VpiHandle): cint =
+proc vpiCompareObjects*(object1: VpiHandle; object2: VpiHandle): cint =
   return vpi_compare_objects_1800v2009(object1, object2)
 
-proc vpi_control*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl,
-                                           impsv_vpi_userHdr, varargs.}
+proc vpiControl*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl,
+                                          impsv_vpi_userHdr, varargs.}
 
-proc vpi_get*(property: cint; obj: VpiHandle): cint =
+proc vpiGet*(property: cint; obj: VpiHandle): cint =
   return vpi_get_1800v2009(property, obj)
 
-proc vpi_get_str*(property: cint; obj: VpiHandle): cstring =
+proc vpiGetStr*(property: cint; obj: VpiHandle): cstring =
   return vpi_get_str_1800v2009(property, obj)
 
-proc vpi_get_value*(expr: VpiHandle; value_p: p_vpi_value) =
+proc vpiGetValue*(expr: VpiHandle; value_p: p_vpi_value) =
   vpi_get_value_1800v2009(expr, value_p)
 
-proc vpi_handle*(typ: cint; refHandle: VpiHandle): VpiHandle =
+proc vpiHandle*(typ: cint; refHandle: VpiHandle): VpiHandle =
   return vpi_handle_1800v2009(typ, refHandle)
 
-proc vpi_handle_multi*(typ: cint; refHandle1, refHandle2: VpiHandle): VpiHandle {.importc: "vpi_handle_multi_1800v2009",
-                                                                                  cdecl, impsv_vpi_userHdr, varargs.}
+proc vpiHandleMulti*(typ: cint; refHandle1, refHandle2: VpiHandle): VpiHandle {.importc: "vpi_handle_multi_1800v2009",
+                                                                                cdecl, impsv_vpi_userHdr, varargs.}
 
-proc vpi_handle_by_index*(obj: VpiHandle; indx: cint): VpiHandle =
+proc vpiHandleByIndex*(obj: VpiHandle; indx: cint): VpiHandle =
   return vpi_handle_by_index_1800v2009(obj, indx)
 
-proc vpi_handle_by_multi_index*(obj: VpiHandle; num_index: cint; index_array: ptr cint): VpiHandle =
+proc vpiHandleByMultiIndex*(obj: VpiHandle; num_index: cint; index_array: ptr cint): VpiHandle =
   return vpi_handle_by_multi_index_1800v2009(obj, num_index, index_array)
 
-proc vpi_handle_by_name*(name: cstring; scope: VpiHandle): VpiHandle =
-  return vpi_handle_by_name_1800v2009(name, scope)
-
-proc vpi_iterate*(typ: cint; refHandle: VpiHandle): VpiHandle =
+proc vpiIterate*(typ: cint; refHandle: VpiHandle): VpiHandle =
   return vpi_iterate_1800v2009(typ, refHandle)
 
-proc vpi_put_value*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): VpiHandle =
+proc vpiPutValue*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): VpiHandle =
   return vpi_put_value_1800v2009(obj, value_p, time_p, flags)
 
-proc vpi_register_cb*(cb_data_p: p_cb_data): VpiHandle =
+proc vpiRegisterCb*(cb_data_p: p_cb_data): VpiHandle =
   return vpi_register_cb_1800v2009(cb_data_p)
 
-proc vpi_scan*(iter: VpiHandle): VpiHandle =
+proc vpiScan*(iter: VpiHandle): VpiHandle =
   return vpi_scan_1800v2009(iter)
 
-when appType == "lib":
-  proc vpiQuit*(finishArg = 1) =
-    # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
-    # vpi_control doesn't seem to work
-    # discard vpi_control(vpiFinish, finishArg)
-    discard tf_dofinish()
+proc vpiQuit*(finishArg = 1) =
+  # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
+  # vpi_control doesn't seem to work
+  # discard vpi_control(vpiFinish, finishArg)
+  discard tf_dofinish()
 
-  proc vpiEcho*(format: string): cint {.discardable.} =
-    return vpi_printf(format & "\n")
+proc vpiEcho*(format: string): cint {.discardable.} =
+  return vpi_printf(format & "\n")
+
+proc vpiHandleByName*(name: cstring; scope: VpiHandle): VpiHandle {.exportc, dynlib.} =
+  result = vpi_handle_by_name_1800v2009(name, scope)
+  if result == nil:
+    vpiEcho &"Error: vpi_handle_by_name: Cannot find an object by name '{name}'"
+    vpiQuit()
+
 
 # https://forum.nim-lang.org/t/7945#50584
 # User code must call this template at global scope, and only once!
