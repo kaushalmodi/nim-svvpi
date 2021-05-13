@@ -9,7 +9,7 @@ license       = "MIT"
 # prompts on each "nimble install" -- https://github.com/nim-lang/nimble/issues/582#issuecomment-840248300
 # srcDir        = "src"
 installFiles  = @["svvpi.nim"]
-installDirs   = @["includes", "svvpi"]
+installDirs   = @["includes", "svvpi", "sv"]
 
 # Dependencies
 
