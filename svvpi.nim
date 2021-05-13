@@ -55,6 +55,22 @@ cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "-f:ast2")
 cImport(cSearchPath("veriuser.h"), recurse = true, flags = "-f:ast2") # Mainly for tf_dofinish
 
 
+proc vpiQuit*(finishArg = 1) =
+  # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
+  # vpi_control doesn't seem to work
+  # discard vpi_control(vpiFinish, finishArg)
+  discard tf_dofinish()
+
+proc vpiEcho*(format: string): cint {.discardable.} =
+  return vpi_printf(format & "\n")
+
+template nilHandleCheck*(handle: VpiHandle; str: string) =
+  if handle == nil:
+    vpiEcho "Error: " & str & ": nil handle"
+    vpiQuit()
+    return
+
+
 # See https://github.com/nim-lang/Nim/issues/18006 on why I chose to
 # use camelCased identifiers below.
 
@@ -65,16 +81,23 @@ proc vpiCompareObjects*(object1: VpiHandle; object2: VpiHandle): cint =
 proc vpiControl*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl,
                                           impsv_vpi_userHdr, varargs.}
 
-proc vpiGet*(property: cint; obj: VpiHandle): cint =
+proc vpiGet*(property: cint; obj: VpiHandle): cint {.exportc, dynlib.} =
+  obj.nilHandleCheck("vpiGet")
   return vpi_get_1800v2009(property, obj)
 
-proc vpiGetStr*(property: cint; obj: VpiHandle): cstring =
-  return vpi_get_str_1800v2009(property, obj)
+proc vpiGetStr*(property: cint; obj: VpiHandle): cstring {.exportc, dynlib.} =
+  obj.nilHandleCheck("vpiGetStr")
+  let
+    # Create a copy of the string on Nim side.
+    ret = $vpi_get_str_1800v2009(property, obj)
+  return ret.cstring
 
 proc vpiGetValue*(expr: VpiHandle; value_p: p_vpi_value) =
   vpi_get_value_1800v2009(expr, value_p)
 
-proc vpiHandle*(typ: cint; refHandle: VpiHandle): VpiHandle =
+# Below proc is exported and so it cannot be named as vpiHandle, because it then
+# clashes during gcc compilation with the vpiHandle typedef in "vpi_user.h".
+proc getVpiHandle*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_handle_1800v2009(typ, refHandle)
 
 proc vpiHandleMulti*(typ: cint; refHandle1, refHandle2: VpiHandle): VpiHandle {.importc: "vpi_handle_multi_1800v2009",
@@ -86,7 +109,7 @@ proc vpiHandleByIndex*(obj: VpiHandle; indx: cint): VpiHandle =
 proc vpiHandleByMultiIndex*(obj: VpiHandle; num_index: cint; index_array: ptr cint): VpiHandle =
   return vpi_handle_by_multi_index_1800v2009(obj, num_index, index_array)
 
-proc vpiIterate*(typ: cint; refHandle: VpiHandle): VpiHandle =
+proc vpiIterate*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_iterate_1800v2009(typ, refHandle)
 
 proc vpiPutValue*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): VpiHandle =
@@ -95,22 +118,13 @@ proc vpiPutValue*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flag
 proc vpiRegisterCb*(cb_data_p: p_cb_data): VpiHandle =
   return vpi_register_cb_1800v2009(cb_data_p)
 
-proc vpiScan*(iter: VpiHandle): VpiHandle =
+proc vpiScan*(iter: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_scan_1800v2009(iter)
-
-proc vpiQuit*(finishArg = 1) =
-  # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
-  # vpi_control doesn't seem to work
-  # discard vpi_control(vpiFinish, finishArg)
-  discard tf_dofinish()
-
-proc vpiEcho*(format: string): cint {.discardable.} =
-  return vpi_printf(format & "\n")
 
 proc vpiHandleByName*(name: cstring; scope: VpiHandle): VpiHandle {.exportc, dynlib.} =
   result = vpi_handle_by_name_1800v2009(name, scope)
   if result == nil:
-    vpiEcho &"Error: vpi_handle_by_name: Cannot find an object by name '{name}'"
+    vpiEcho &"Error: vpiHandleByName: Cannot find an object by name '{name}'"
     vpiQuit()
 
 
@@ -132,7 +146,7 @@ macro vpiDefineTask*(procSym, body: untyped) =
   let
     procName = $procSym.basename # https://forum.nim-lang.org/t/7947#50608
   if procName.len <= 1:
-    echo "[Error] The proc name needs to be at least 2 chars long."
+    echo "Error: The proc name needs to be at least 2 chars long."
     quit QuitFailure
 
   let
