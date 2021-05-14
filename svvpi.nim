@@ -149,6 +149,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
     procSym: NimNode
     procName: string
     keyword: string
+    setupNode = newEmptyNode()
     compiletfSym = newNilLit()
     calltfSym = newNilLit()
     sizetfSym = newNilLit()
@@ -189,7 +190,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
           tfKeyword = $e1
           if not validKeywords.anyIt(it == tfKeyword):
             error "The keyword should be one of $#, but '$#' was found" % [$validKeywords, tfKeyword]
-          validKeys = @["compiletf", "calltf", "userdata", "more"]
+          validKeys = @["setup", "compiletf", "calltf", "userdata", "more"]
           if tfKeyword == "task":
             tfType = vpiSysTask
           else:
@@ -231,6 +232,8 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
             e2.expectKind(nnkStmtList)
 
             case keyword
+            of "setup":
+              setupNode = e2
             of "compiletf":
               compiletfSym = ident(keyword)
               tfProcNodes.add quote do:
@@ -278,6 +281,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
 
   result = quote do:
     proc `procSym`() =
+      `settupNode`
       `tfProcNodes`
       var
         taskDataObj = s_vpi_systf_data(type: `tfType`,
