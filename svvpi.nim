@@ -228,7 +228,6 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
               error "The key should be one of $# for a $#, but '$#' was found" % [$validKeys, tfKeyword, tfFuncKeyword]
           of 1:
             e2.expectKind(nnkStmtList)
-            e2.expectLen(1)
 
             case tfFuncKeyword
             of "compiletf":
