@@ -148,7 +148,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
     tfType: cint
     procSym: NimNode
     procName: string
-    tfFuncKeyword: string
+    keyword: string
     compiletfSym = newNilLit()
     compiletfProcNode = newEmptyNode()
     calltfSym = newNilLit()
@@ -223,15 +223,15 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
           case k
           of 0:
             e2.expectKind(nnkIdent) # Should be compiletf, calltf, ..
-            tfFuncKeyword = $e2
-            if not validKeys.anyIt(it == toLowerAscii(tfFuncKeyword)):
-              error "The key should be one of $# for a $#, but '$#' was found" % [$validKeys, tfKeyword, tfFuncKeyword]
+            keyword = $e2
+            if not validKeys.anyIt(it == toLowerAscii(keyword)):
+              error "The key should be one of $# for a $#, but '$#' was found" % [$validKeys, tfKeyword, keyword]
           of 1:
             e2.expectKind(nnkStmtList)
 
-            case tfFuncKeyword
+            case keyword
             of "compiletf":
-              compiletfSym = ident(tfFuncKeyword)
+              compiletfSym = ident(keyword)
               compiletfProcNode = quote do:
                 # Below proc needs to have the signature "proc (a1: cstring): cint
                 # {.cdecl.}"  as that's what nimterop auto-parses the
@@ -241,14 +241,14 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
                   `e2`
             of "calltf":
-              calltfSym = ident(tfFuncKeyword)
+              calltfSym = ident(keyword)
               calltfProcNode = quote do:
                 proc calltf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
                   `e2`
             of "sizetf":
-              sizetfSym = ident(tfFuncKeyword)
+              sizetfSym = ident(keyword)
               sizetfProcNode = quote do:
                 proc sizetf(userData: cstring): cint {.cdecl.} =
                   let
