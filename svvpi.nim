@@ -1,4 +1,4 @@
-import std/[os, macros, strutils, strformat]
+import std/[os, macros, strutils, strformat, sequtils]
 import nimterop/cimport
 
 when defined(svGenWrapper):
@@ -139,33 +139,145 @@ template setVlogStartupRoutines*(procArray: varargs[proc() {.nimcall.}]) =
     vlog_startup_routines[i] = procArray[i]
   vlog_startup_routines[numProcs] = nil
 
-macro vpiDefineTask*(procSym, body: untyped) =
-  let
-    procName = $procSym.basename # https://forum.nim-lang.org/t/7947#50608
-  if procName.len <= 1:
-    echo "Error: The proc name needs to be at least 2 chars long."
-    quit QuitFailure
+macro vpiDefine*(exps: varargs[untyped]): untyped =
+  const
+    validKeywords = ["task", "function"]
+  var
+    validKeys: seq[string]
+    tfKeyword: string
+    tfType: cint
+    procSym: NimNode
+    procName: string
+    tfFuncKeyword: string
+    compiletfSym = newNilLit()
+    compiletfProcNode = newEmptyNode()
+    calltfSym = newNilLit()
+    calltfProcNode = newEmptyNode()
+    sizetfSym = newNilLit()
+    sizetfProcNode = newEmptyNode()
+    userdataNode = newNilLit()
 
-  let
-    # procName = "foo" -> intProcName = "internalFoo"
-    intProcName = "internal" & procName[0].toUpperAscii() & procName[1 .. procName.high]
-    intProcSym = ident(intProcName)
+  when defined(debug):
+    echo "exps len = $#" % [$exps.len]
+  # Minimal macro call:
+  #   vpiDefine task bye:       <- exps[0]
+  #     calltf:                 <- exps[1]
+  #       vpiEcho "In calltf"
+  exps.expectLen(2)
+  for i, e0 in exps:
+    when defined(debug):
+      echo "exps[$#]: $#"       % [$i, e0.repr]
+      echo "exps[$#] kind = $#" % [$i, $e0.kind]
+      echo "exps[$#] len = $#"  % [$i, $e0.len]
+
+    case i
+    of 0:
+      #     Command
+      #       Ident "task"
+      #       Ident "bye"
+      e0.expectKind(nnkCommand)
+      e0.expectLen(2)
+      for j, e1 in e0:
+        when defined(debug):
+          echo "  exps[$#][$#]: $#"       % [$i, $j, e1.repr]
+          echo "  exps[$#][$#] kind = $#" % [$i, $j, $e1.kind]
+          echo "  exps[$#][$#] len = $#"  % [$i, $j, $e1.len]
+        e1.expectKind(nnkIdent)
+
+        case j
+        of 0:
+          tfKeyword = $e1
+          if not validKeywords.anyIt(it == tfKeyword):
+            error "The keyword should be one of $#, but '$#' was found" % [$validKeywords, tfKeyword]
+          validKeys = @["compiletf", "calltf", "userdata"]
+          if tfKeyword == "task":
+            tfType = vpiSysTask
+          else:
+            tfType = vpiSysFunc
+            validKeys.add("sizetf")
+        of 1:
+          procSym = e1
+          procName = $e1
+          when defined(debug):
+            echo "  $# $#" % [tfKeyword, procName]
+        else:
+          quit QuitFailure # unreachable
+
+    of 1:
+      e0.expectKind(nnkStmtList)
+      e0.expectMinLen(1) # At least a calltf should be defined.
+      for j, e1 in e0:
+        when defined(debug):
+          echo "  exps[$#][$#]: $#"       % [$i, $j, e1.repr]
+          echo "  exps[$#][$#] kind = $#" % [$i, $j, $e1.kind]
+          echo "  exps[$#][$#] len = $#"  % [$i, $j, $e1.len]
+
+        e1.expectKind(nnkCall) # Should be compiletf:, calltf:, ..
+        e1.expectLen(2)
+        for k, e2 in e1:
+          when defined(debug):
+            echo "    exps[$#][$#][$#]: $#"       % [$i, $j, $k, e2.repr]
+            echo "    exps[$#][$#][$#] kind = $#" % [$i, $j, $k, $e2.kind]
+            echo "    exps[$#][$#][$#] len = $#"  % [$i, $j, $k, $e2.len]
+
+          case k
+          of 0:
+            e2.expectKind(nnkIdent) # Should be compiletf, calltf, ..
+            tfFuncKeyword = $e2
+            if not validKeys.anyIt(it == toLowerAscii(tfFuncKeyword)):
+              error "The key should be one of $# for a $#, but '$#' was found" % [$validKeys, tfKeyword, tfFuncKeyword]
+          of 1:
+            e2.expectKind(nnkStmtList)
+            e2.expectLen(1)
+
+            case tfFuncKeyword
+            of "compiletf":
+              compiletfSym = ident(tfFuncKeyword)
+              compiletfProcNode = quote do:
+                # Below proc needs to have the signature "proc (a1: cstring): cint
+                # {.cdecl.}"  as that's what nimterop auto-parses the
+                # `t_vpi_systf_data.calltf` type to.
+                proc compiletf(userData: cstring): cint {.cdecl.} =
+                  let
+                    userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
+                  `e2`
+            of "calltf":
+              calltfSym = ident(tfFuncKeyword)
+              calltfProcNode = quote do:
+                proc calltf(userData: cstring): cint {.cdecl.} =
+                  let
+                    userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
+                  `e2`
+            of "sizetf":
+              sizetfSym = ident(tfFuncKeyword)
+              sizetfProcNode = quote do:
+                proc sizetf(userData: cstring): cint {.cdecl.} =
+                  let
+                    userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
+                  `e2`
+            of "userdata":
+              userdataNode = e2
+            else:
+              quit QuitFailure # unreachable
+          else:
+            quit QuitFailure # unreachable
+    else:
+      quit QuitFailure # unreachable
+    when defined(debug):
+      echo ""
 
   result = quote do:
     proc `procSym`() =
-      # Below proc needs to have the signature "proc (a1: cstring): cint
-      # {.cdecl.}"  as that's what nimterop auto-parses the
-      # `t_vpi_systf_data.calltf` type to.
-      proc `intProcSym`(userData: cstring): cint {.cdecl.} =
-        let
-          userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-        `body`
-
+      `compiletfProcNode`
+      `calltfProcNode`
+      `sizetfProcNode`
       var
-        taskDataObj = s_vpi_systf_data(type: vpiSysTask,
+        taskDataObj = s_vpi_systf_data(type: `tfType`,
                                        tfname: "$" & `procName`,
-                                       calltf: `intProcSym`,
-                                       compiletf: nil,
-                                       sizetf: nil)
+                                       compiletf: `compiletfSym`,
+                                       calltf: `calltfSym`,
+                                       sizetf: `sizetfSym`,
+                                       user_data: `userdataNode`)
 
+      # TODO: Add support for registering callbacks.
       discard vpi_register_systf(addr taskDataObj)
