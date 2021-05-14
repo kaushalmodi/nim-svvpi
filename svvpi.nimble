@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.0.3"
+version       = "0.0.4"
 author        = "Kaushal Modi"
 description   = "Wrapper for SystemVerilog VPI headers vpi_user.h and sv_vpi_user.h"
 license       = "MIT"
