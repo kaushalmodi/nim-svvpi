@@ -153,6 +153,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
     calltfSym = newNilLit()
     sizetfSym = newNilLit()
     tfProcNodes = newStmtList()
+    functypeNode = ident("vpiIntFunc") # Default the sys func return types to be int
     userdataNode = newNilLit()
     moreNode = newEmptyNode()
 
@@ -194,6 +195,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
           else:
             tfType = vpiSysFunc
             validKeys.add("sizetf")
+            validKeys.add("functype")
         of 1:
           procSym = e1
           procName = $e1
@@ -248,11 +250,19 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                   `e2`
             of "sizetf":
               sizetfSym = ident(keyword)
+              # It's safe to assume that if the user used 'sizetf',
+              # they would want the func return type to be sized. The
+              # return type is assumed to be vpiSizedFunc in that
+              # case.
+              if functypeNode == ident("vpiIntFunc"):
+                functypeNode = ident("vpiSizedFunc")
               tfProcNodes.add quote do:
                 proc sizetf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
                   `e2`
+            of "functype":
+              functypeNode = e2
             of "userdata":
               userdataNode = e2
             of "more":
@@ -274,6 +284,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                                        tfname: "$" & `procName`,
                                        compiletf: `compiletfSym`,
                                        calltf: `calltfSym`,
+                                       sysfunctype: `functypeNode`,
                                        sizetf: `sizetfSym`,
                                        user_data: `userdataNode`)
 
