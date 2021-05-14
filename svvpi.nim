@@ -214,7 +214,11 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
           echo "  exps[$#][$#] kind = $#" % [$i, $j, $e1.kind]
           echo "  exps[$#][$#] len = $#"  % [$i, $j, $e1.len]
 
-        e1.expectKind(nnkCall) # Should be compiletf:, calltf:, ..
+        e1.expectKind({nnkCommentStmt, nnkCall})
+        if e1.kind == nnkCommentStmt:
+          continue # We don't need to do any parsing of the doc strings
+
+        # e1 should be of nnkCall kind here, e.g. compiletf:, calltf:, ..
         e1.expectLen(2)
         for k, e2 in e1:
           when defined(debug):
@@ -281,7 +285,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
 
   result = quote do:
     proc `procSym`() =
-      `settupNode`
+      `setupNode`
       `tfProcNodes`
       var
         taskDataObj = s_vpi_systf_data(type: `tfType`,
