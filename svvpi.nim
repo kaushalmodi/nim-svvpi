@@ -156,6 +156,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
     sizetfSym = newNilLit()
     sizetfProcNode = newEmptyNode()
     userdataNode = newNilLit()
+    moreNode = newEmptyNode()
 
   when defined(debug):
     echo "exps len = $#" % [$exps.len]
@@ -189,7 +190,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
           tfKeyword = $e1
           if not validKeywords.anyIt(it == tfKeyword):
             error "The keyword should be one of $#, but '$#' was found" % [$validKeywords, tfKeyword]
-          validKeys = @["compiletf", "calltf", "userdata"]
+          validKeys = @["compiletf", "calltf", "userdata", "more"]
           if tfKeyword == "task":
             tfType = vpiSysTask
           else:
@@ -256,6 +257,8 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                   `e2`
             of "userdata":
               userdataNode = e2
+            of "more":
+              moreNode = e2
             else:
               quit QuitFailure # unreachable
           else:
@@ -280,3 +283,4 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
 
       # TODO: Add support for registering callbacks.
       discard vpi_register_systf(addr taskDataObj)
+      `moreNode`
