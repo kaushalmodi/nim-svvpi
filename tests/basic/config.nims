@@ -1,1 +1,1 @@
-switch("path", "../../svvpi/")
+switch("path", "../../")
