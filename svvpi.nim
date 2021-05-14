@@ -150,11 +150,9 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
     procName: string
     keyword: string
     compiletfSym = newNilLit()
-    compiletfProcNode = newEmptyNode()
     calltfSym = newNilLit()
-    calltfProcNode = newEmptyNode()
     sizetfSym = newNilLit()
-    sizetfProcNode = newEmptyNode()
+    tfProcNodes = newStmtList()
     userdataNode = newNilLit()
     moreNode = newEmptyNode()
 
@@ -233,7 +231,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
             case keyword
             of "compiletf":
               compiletfSym = ident(keyword)
-              compiletfProcNode = quote do:
+              tfProcNodes.add quote do:
                 # Below proc needs to have the signature "proc (a1: cstring): cint
                 # {.cdecl.}"  as that's what nimterop auto-parses the
                 # `t_vpi_systf_data.calltf` type to.
@@ -243,14 +241,14 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                   `e2`
             of "calltf":
               calltfSym = ident(keyword)
-              calltfProcNode = quote do:
+              tfProcNodes.add quote do:
                 proc calltf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
                   `e2`
             of "sizetf":
               sizetfSym = ident(keyword)
-              sizetfProcNode = quote do:
+              tfProcNodes.add quote do:
                 proc sizetf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
@@ -270,9 +268,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
 
   result = quote do:
     proc `procSym`() =
-      `compiletfProcNode`
-      `calltfProcNode`
-      `sizetfProcNode`
+      `tfProcNodes`
       var
         taskDataObj = s_vpi_systf_data(type: `tfType`,
                                        tfname: "$" & `procName`,
