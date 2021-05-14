@@ -12,6 +12,7 @@ vpiDefine function do_nothing:
   compiletf: discard
   calltf: discard
   sizetf: discard
+  userdata: "foo"
 
 # Register the tasks.
 setVlogStartupRoutines(hello, bye, do_nothing)
