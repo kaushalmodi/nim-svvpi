@@ -43,13 +43,8 @@ cDefine("VPI_COMPATIBILITY_VERSION_1800v2009")
 
 cOverride:
   const
-    vpiSysFuncType* = vpiFuncType
-    vpiSysFuncReal* = vpiRealFunc
-    vpiSysFuncTime* = vpiTimeFunc
-    vpiSysFuncSized* = vpiSizedFunc
     vpiArrayVar* = vpiRegArray
     vpiArrayNet* = vpiNetArray
-    vpiInterfaceDecl* = vpiVirtualInterfaceVar
 
 # https://github.com/nimterop/nimterop#header-vs-dynlib
 #   With --noHeader, types will be pure Nim and procs will be just {.importc.}.

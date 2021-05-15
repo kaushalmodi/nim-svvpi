@@ -1,13 +1,17 @@
 
-# Overriding vpiSysFuncType vpiSysFuncReal vpiSysFuncTime vpiSysFuncSized vpiArrayVar vpiArrayNet vpiInterfaceDecl
+# Overriding vpiArrayVar vpiArrayNet
 # Importing /path/to/sv_vpi_user.h
 # Command line:
-#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --noHeader -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiSysFuncType,vpiSysFuncReal,vpiSysFuncTime,vpiSysFuncSized,vpiArrayVar,vpiArrayNet,vpiInterfaceDecl --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_225075350.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_3621668425.nim
+#   /home/kmodi/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --noHeader -f:ast2 --defines+=VPI_COMPATIBILITY_VERSION_1800v2009 --pnim --symOverride=vpiArrayVar,vpiArrayNet --nim:/home/kmodi/usr_local/apps/7/nim/devel/bin/nim --pluginSourcePath=/tmp/kmodi/.cache/nim/nimterop/cPlugins/nimterop_3908335472.nim /path/to/sv_vpi_user.h -o /tmp/kmodi/.cache/nim/nimterop/toastCache/nimterop_705501239.nim
 
 # const 'PLI_VEXTERN' has unsupported value 'extern'
 # const 'XXTERN' has unsupported value 'PLI_EXTERN PLI_DLLISPEC'
 # const 'EETERN' has unsupported value 'PLI_EXTERN PLI_DLLESPEC'
 # const 'vpiBitXnorOp' has unsupported value 'vpiBitXNorOp /* added with 1364-2001 */'
+# const 'vpiSysFuncType' has unsupported value 'vpiFuncType'
+# const 'vpiSysFuncReal' has unsupported value 'vpiRealFunc'
+# const 'vpiSysFuncTime' has unsupported value 'vpiTimeFunc'
+# const 'vpiSysFuncSized' has unsupported value 'vpiSizedFunc'
 # const 'vpi_compare_objects' has unsupported value 'vpi_compare_objects_1800v2009'
 # const 'vpi_control' has unsupported value 'vpi_control_1800v2009'
 # const 'vpi_get' has unsupported value 'vpi_get_1800v2009'
@@ -22,6 +26,7 @@
 # const 'vpi_put_value' has unsupported value 'vpi_put_value_1800v2009'
 # const 'vpi_register_cb' has unsupported value 'vpi_register_cb_1800v2009'
 # const 'vpi_scan' has unsupported value 'vpi_scan_1800v2009'
+# const 'vpiInterfaceDecl' has unsupported value 'vpiVirtualInterfaceVar /* interface decl deprecated */'
 {.push hint[ConvFromXtoItselfNotNeeded]: off.}
 
 type va_list* {.importc, header:"<stdarg.h>".} = object
@@ -356,11 +361,7 @@ const
   vpiTimeFunc* = 3
   vpiSizedFunc* = 4
   vpiSizedSignedFunc* = 5
-  vpiSysFuncType* = vpiFuncType
   vpiSysFuncInt* = vpiIntFunc
-  vpiSysFuncReal* = vpiRealFunc
-  vpiSysFuncTime* = vpiTimeFunc
-  vpiSysFuncSized* = vpiSizedFunc
   vpiUserDefn* = 45
   vpiScheduled* = 46
   vpiActive* = 49
@@ -621,7 +622,6 @@ const
   vpiTypedef* = 725
   vpiImport* = 726
   vpiDerivedClasses* = 727
-  vpiInterfaceDecl* = vpiVirtualInterfaceVar
   vpiMethods* = 730
   vpiSolveBefore* = 731
   vpiSolveAfter* = 732
