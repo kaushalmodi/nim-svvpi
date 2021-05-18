@@ -142,7 +142,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
     tfKeyword: string
     tfType: cint
     procSym: NimNode
-    procName: string
+    tfName: string
     keyword: string
     setupNode = newEmptyNode()
     compiletfSym = newNilLit()
@@ -194,9 +194,9 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
             validKeys.add("functype")
         of 1:
           procSym = e1
-          procName = $e1
+          tfName = "$" & $e1 # This must always begin with "$".
           when defined(debug):
-            echo "  $# $#" % [tfKeyword, procName]
+            echo "  $# $#" % [tfKeyword, tfName]
         else:
           quit QuitFailure # unreachable
 
@@ -284,7 +284,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
       `tfProcNodes`
       var
         taskDataObj = s_vpi_systf_data(type: `tfType`,
-                                       tfname: "$" & `procName`,
+                                       tfname: `tfName`,
                                        compiletf: `compiletfSym`,
                                        calltf: `calltfSym`,
                                        sysfunctype: `functypeNode`,
