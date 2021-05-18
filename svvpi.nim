@@ -142,7 +142,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
     tfKeyword: string
     tfType: cint
     procSym: NimNode
-    procName: string
+    tfName: string
     keyword: string
     setupNode = newEmptyNode()
     compiletfSym = newNilLit()
@@ -194,9 +194,9 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
             validKeys.add("functype")
         of 1:
           procSym = e1
-          procName = $e1
+          tfName = "$" & $e1
           when defined(debug):
-            echo "  $# $#" % [tfKeyword, procName]
+            echo "  $# $#" % [tfKeyword, tfName]
         else:
           quit QuitFailure # unreachable
 
@@ -242,6 +242,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                 proc compiletf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
+                    tfName {.inject.} = tfName
                   `e2`
             of "calltf":
               calltfSym = ident(keyword)
@@ -249,6 +250,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                 proc calltf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
+                    tfName {.inject.} = tfName
                   `e2`
             of "sizetf":
               sizetfSym = ident(keyword)
@@ -262,6 +264,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                 proc sizetf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
+                    tfName {.inject.} = tfName
                   `e2`
             of "functype":
               functypeNode = e2
@@ -284,7 +287,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
       `tfProcNodes`
       var
         taskDataObj = s_vpi_systf_data(type: `tfType`,
-                                       tfname: "$" & `procName`,
+                                       tfname: `tfName`,
                                        compiletf: `compiletfSym`,
                                        calltf: `calltfSym`,
                                        sysfunctype: `functypeNode`,
