@@ -384,10 +384,12 @@ template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
     else: # Both iterHandle and argHandle are non-nil
       # echo "arg $# type = $#" % [$argIndex, $vpi_get(vpiType, argHandle)]
       if argIndex >= numArgs:
-        if numArgs == 0 and vpi_get(vpiType, argHandle) in {vpiOperation}:
+        if numArgs == 0 and
+           vpi_get(vpiType, argHandle) in {vpiOperation} and
+           vpi_get(vpiOpType, argHandle) in {vpiNullOp}:
           # For $foo() in SV, the '()' is inferred as an arg of type
-          # vpiOperation. For practical purposes, we will consider that
-          # as "no arg".
+          # vpiOperation->vpiNullOp. For practical purposes, we will
+          # consider that as "no arg".
           continue
         discard vpi_release_handle(iterHandle) # free iterator memory
         vpiException "$# requires only $# arguments, but has more" % [tfName, $numArgs]
