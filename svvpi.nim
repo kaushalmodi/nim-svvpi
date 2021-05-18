@@ -146,6 +146,24 @@ proc vpiQuitOnException*(systfHandle: VpiHandle) =
 template vpiException*(error: string) =
   raise newException(VpiTfError, error)
 
+template createTfProc(procSym: untyped; body: untyped) =
+  # Below proc needs to have the signature "proc (a1: cstring): cint
+  # {.cdecl.}"  as that's what nimterop auto-parses the
+  # `t_vpi_systf_data.compiletf`, `t_vpi_systf_data.calltf`,
+  # etc. types to.
+  proc `procSym`(userData: cstring): cint {.cdecl.} =
+    let
+      userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
+    var
+      systfHandle {.inject.}: VpiHandle
+    try:
+      systfHandle = vpi_handle(vpiSysTfCall, nil)
+      if systfHandle == nil:
+        vpiException &"{tfName} failed to obtain systf handle"
+      body
+    except VpiTfError:
+      systfHandle.vpiQuitOnException()
+
 macro vpiDefine*(exps: varargs[untyped]): untyped =
   const
     validKeywords = ["task", "function"]
@@ -249,37 +267,12 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
             of "compiletf":
               compiletfSym = ident(keyword)
               tfProcNodes.add quote do:
-                # Below proc needs to have the signature "proc (a1: cstring): cint
-                # {.cdecl.}"  as that's what nimterop auto-parses the
-                # `t_vpi_systf_data.calltf` type to.
-                proc compiletf(userData: cstring): cint {.cdecl.} =
-                  let
-                    userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-                  var
-                    systfHandle {.inject.}: VpiHandle
-                  try:
-                    systfHandle = vpi_handle(vpiSysTfCall, nil)
-                    if systfHandle == nil:
-                      vpiException &"{tfName} failed to obtain systf handle"
-                    `e2`
-                  except VpiTfError:
-                    systfHandle.vpiQuitOnException()
+                createTfProc(compiletf, `e2`)
 
             of "calltf":
               calltfSym = ident(keyword)
               tfProcNodes.add quote do:
-                proc calltf(userData: cstring): cint {.cdecl.} =
-                  let
-                    userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-                  var
-                    systfHandle {.inject.}: VpiHandle
-                  try:
-                    systfHandle = vpi_handle(vpiSysTfCall, nil)
-                    if systfHandle == nil:
-                      vpiException &"{tfName} failed to obtain systf handle"
-                    `e2`
-                  except VpiTfError:
-                    systfHandle.vpiQuitOnException()
+                createTfProc(calltf, `e2`)
 
             of "sizetf":
               sizetfSym = ident(keyword)
