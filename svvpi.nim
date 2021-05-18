@@ -348,6 +348,11 @@ iterator vpiHandles2*(systfHandle: VpiHandle; typ: int; allowNilYield = false): 
     if elemHandle == nil:
       break
 
+iterator vpiHandles2*(systfHandle: VpiHandle; types: openArray[int]; allowNilYield = false): (VpiHandle, VpiHandle) =
+  for typ in types:
+    for argHandle, iterHandle in systfHandle.vpiHandles2(typ, allowNilYield):
+      yield (argHandle, iterHandle)
+
 iterator vpiHandles3*(systfHandle: VpiHandle; typ: int; allowNilYield = false): (int, VpiHandle, VpiHandle) =
   ## Yields (index, handle of element pointed by iterator, iterator handle).
   var
@@ -355,6 +360,11 @@ iterator vpiHandles3*(systfHandle: VpiHandle; typ: int; allowNilYield = false): 
   for argHandle, iterHandle in systfHandle.vpiHandles2(typ, allowNilYield):
     yield (index, argHandle, iterHandle)
     inc index
+
+iterator vpiHandles3*(systfHandle: VpiHandle; types: openArray[int]; allowNilYield = false): (int, VpiHandle, VpiHandle) =
+  for typ in types:
+    for argIndex, argHandle, iterHandle in systfHandle.vpiHandles3(typ, allowNilYield):
+      yield (argIndex, argHandle, iterHandle)
 
 iterator vpiArgs*(systfHandle: VpiHandle; allowNilYield = false): (int, VpiHandle) =
   ## Yields (argument index, argument handle).
