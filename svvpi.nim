@@ -329,42 +329,45 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
       `moreNode`
 
 ## Iterators
-iterator vpiHandles*(systfHandle: VpiHandle; typ: cint): (VpiHandle, VpiHandle) =
-  ## Yields (iterator handle, handle of element pointed by iterator).
+iterator vpiHandles2*(systfHandle: VpiHandle; typ: cint; allowNilYield = false): (VpiHandle, VpiHandle) =
+  ## Yields (handle of element pointed by iterator, iterator handle).
   let
     iterHandle = systfHandle.vpi_iterate(typ)
-  while true:
-    if iterHandle == nil:
-      yield (nil, nil)
-      break
+  if allowNilYield and iterHandle == nil:
+    yield (nil, nil)
+  while iterHandle != nil:
     let
       elemHandle = vpi_scan(iterHandle)
-    yield (iterHandle, elemHandle) # Need to return the iterHandle in case
+    if not allowNilYield and elemHandle == nil:
+      # This is where the vpi_scan returns nil.
+      # The iterator object is freed up automatically
+      # at this point and we just break out of the iter.
+      break
+    yield (elemHandle, iterHandle) # Need to return the iterHandle in case
                                    # the application needs to free its memory
     if elemHandle == nil:
       break
 
-iterator vpiHandlesWithIndex*(systfHandle: VpiHandle; typ: cint): (VpiHandle, int, VpiHandle) =
-  ## Yields (iterator handle, index, handle of element pointed by iterator).
+iterator vpiHandles3*(systfHandle: VpiHandle; typ: cint; allowNilYield = false): (int, VpiHandle, VpiHandle) =
+  ## Yields (index, handle of element pointed by iterator, iterator handle).
   var
     index = 0
-  for iterHandle, argHandle in systfHandle.vpiHandles(vpiArgument):
-    yield (iterHandle, index, argHandle)
+  for argHandle, iterHandle in systfHandle.vpiHandles2(vpiArgument, allowNilYield):
+    yield (index, argHandle, iterHandle)
     inc index
 
-iterator vpiArgs*(systfHandle: VpiHandle): (int, VpiHandle) =
+iterator vpiArgs*(systfHandle: VpiHandle; allowNilYield = false): (int, VpiHandle) =
   ## Yields (argument index, argument handle).
-  for _, argIndex, argHandle in systfHandle.vpiHandlesWithIndex(vpiArgument):
-    if argHandle == nil: # This is where the vpi_scan returns nil
-      break              # The iterator object is freed up automatically
-                         # at this point and we just break out of the iter.
+  for argIndex, argHandle, _ in systfHandle.vpiHandles3(vpiArgument, allowNilYield):
     yield (argIndex, argHandle)
 
 template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
   ## tfName, a string variable needs to be declared in the scope where
   ## this template is called.
-  for iterHandle, argIndex, argHandle in systfHandle.vpiHandlesWithIndex(vpiArgument):
-    if argHandle == nil:
+  for argIndex, argHandle, iterHandle in systfHandle.vpiHandles3(vpiArgument, allowNilYield = true):
+    if iterHandle == nil:
+      vpiException "$# requires $# arguments, but has none" % [tfName, $numArgs]
+    elif argHandle == nil:
       if argIndex <= numArgs - 1:
         vpiException "$# requires $# arguments, but has only $#" % [tfName, $numArgs, $argIndex]
     else:
