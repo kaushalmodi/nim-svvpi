@@ -103,6 +103,9 @@ proc vpi_handle_by_multiIndex*(obj: VpiHandle; num_index: cint; index_array: ptr
 
 proc vpi_iterate*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_iterate_1800v2009(typ, refHandle)
+# Add swapped arg version so that we can do systfHandle.vpi_iterate(vpiArgument).
+proc vpi_iterate*(refHandle: VpiHandle; typ: cint): VpiHandle =
+  return vpi_iterate(typ, refHandle)
 
 proc vpi_put_value*(obj: VpiHandle; value_p: p_vpi_value; time_p: p_vpi_time; flags: cint): VpiHandle =
   return vpi_put_value_1800v2009(obj, value_p, time_p, flags)
