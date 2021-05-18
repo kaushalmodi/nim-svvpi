@@ -327,3 +327,55 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
       # TODO: Add support for registering callbacks.
       discard vpi_register_systf(addr taskDataObj)
       `moreNode`
+
+## Iterators
+iterator vpiHandles*(systfHandle: VpiHandle; typ: cint): (VpiHandle, VpiHandle) =
+  ## Yields (iterator handle, handle of element pointed by iterator).
+  let
+    iterHandle = systfHandle.vpi_iterate(typ)
+  while true:
+    if iterHandle == nil:
+      yield (nil, nil)
+      break
+    let
+      elemHandle = vpi_scan(iterHandle)
+    yield (iterHandle, elemHandle) # Need to return the iterHandle in case
+                                   # the application needs to free its memory
+    if elemHandle == nil:
+      break
+
+iterator vpiHandlesWithIndex*(systfHandle: VpiHandle; typ: cint): (VpiHandle, int, VpiHandle) =
+  ## Yields (iterator handle, index, handle of element pointed by iterator).
+  var
+    index = 0
+  for iterHandle, argHandle in systfHandle.vpiHandles(vpiArgument):
+    yield (iterHandle, index, argHandle)
+    inc index
+
+iterator vpiArgs*(systfHandle: VpiHandle): (int, VpiHandle) =
+  ## Yields (argument index, argument handle).
+  for _, argIndex, argHandle in systfHandle.vpiHandlesWithIndex(vpiArgument):
+    if argHandle == nil: # This is where the vpi_scan returns nil
+      break              # The iterator object is freed up automatically
+                         # at this point and we just break out of the iter.
+    yield (argIndex, argHandle)
+
+template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
+  ## tfName, a string variable needs to be declared in the scope where
+  ## this template is called.
+  for iterHandle, argIndex, argHandle in systfHandle.vpiHandlesWithIndex(vpiArgument):
+    if argHandle == nil:
+      if argIndex <= numArgs - 1:
+        vpiException "$# requires $# arguments, but has only $#" % [tfName, $numArgs, $argIndex]
+    else:
+      # echo "arg $# type = $#" % [$argIndex, $vpi_get(vpiType, argHandle)]
+      if argIndex >= numArgs:
+        if argIndex == numArgs:
+          let
+            argType = vpi_get(vpiType, argHandle)
+          if argType notin {vpiOperation}: # $foo() <- The '()' is inferred as an arg of type vpiOperation
+            discard vpi_release_handle(iterHandle) # free iterator memory
+            vpiException "$# requires only $# arguments, but has more" % [tfName, $numArgs]
+        else:
+          discard vpi_release_handle(iterHandle) # free iterator memory
+          vpiException "$# requires only $# arguments, but has more" % [tfName, $numArgs]
