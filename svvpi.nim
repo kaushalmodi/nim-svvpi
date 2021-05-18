@@ -134,6 +134,18 @@ template setVlogStartupRoutines*(procArray: varargs[proc() {.nimcall.}]) =
     vlog_startup_routines[i] = procArray[i]
   vlog_startup_routines[numProcs] = nil
 
+type
+  VpiTfError* = object of Exception
+
+proc vpiQuitOnException*(systfHandle: VpiHandle) =
+  let
+    lineNo = vpi_get(vpiLineNo, systfHandle)
+  vpiEcho &"ERROR: Line {lineNo}: {getCurrentExceptionMsg()}"
+  vpiQuit()
+
+template vpiException*(error: string) =
+  raise newException(VpiTfError, error)
+
 macro vpiDefine*(exps: varargs[untyped]): untyped =
   const
     validKeywords = ["task", "function"]
@@ -233,6 +245,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
             case keyword
             of "setup":
               setupNode = e2
+
             of "compiletf":
               compiletfSym = ident(keyword)
               tfProcNodes.add quote do:
@@ -242,14 +255,32 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                 proc compiletf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-                  `e2`
+                  var
+                    systfHandle {.inject.}: VpiHandle
+                  try:
+                    systfHandle = vpi_handle(vpiSysTfCall, nil)
+                    if systfHandle == nil:
+                      vpiException &"{tfName} failed to obtain systf handle"
+                    `e2`
+                  except VpiTfError:
+                    systfHandle.vpiQuitOnException()
+
             of "calltf":
               calltfSym = ident(keyword)
               tfProcNodes.add quote do:
                 proc calltf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-                  `e2`
+                  var
+                    systfHandle {.inject.}: VpiHandle
+                  try:
+                    systfHandle = vpi_handle(vpiSysTfCall, nil)
+                    if systfHandle == nil:
+                      vpiException &"{tfName} failed to obtain systf handle"
+                    `e2`
+                  except VpiTfError:
+                    systfHandle.vpiQuitOnException()
+
             of "sizetf":
               sizetfSym = ident(keyword)
               # It's safe to assume that if the user used 'sizetf',
@@ -263,12 +294,16 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
                   `e2`
+
             of "functype":
               functypeNode = e2
+
             of "userdata":
               userdataNode = e2
+
             of "more":
               moreNode = e2
+
             else:
               quit QuitFailure # unreachable
           else:

@@ -13,8 +13,9 @@ https://nim-lang.org/install.html.
 User needs to have access to some SystemVerilog simulator supporting
 VPI, like Cadence Xcelium.
 
-* ~vpiDefine~ macro
-** Defining a system task
+* Macros
+** ~vpiDefine~
+*** Defining a system task
 #+begin_src nim
 vpiDefine task <sys task>:
   setup: # optional
@@ -35,7 +36,7 @@ vpiDefine task hello:
   calltf:
     vpiEcho "Hello!"
 #+end_src
-** Defining a system function
+*** Defining a system function
 #+begin_src nim
 vpiDefine function <sys function>:
   setup: # optional
@@ -63,16 +64,26 @@ vpiDefine function hello:
   calltf:
     vpiEcho "Hello!"
 #+end_src
-** Special variables
-|------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Variable   | Description                                                                                                                                                                                                   |
-|            | <100>                                                                                                                                                                                                         |
-|------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| *userData* | If a ~vpiDefine~ has set ~userdata: <some string>~, that string is available as this variable inside ~compiletf:~, ~calltf:~ and ~sizetf:~.                                                                   |
-| *tfName*   | This string const is the task/function identifier with a ~$~ prefix. So if you have ~vpiDefine task mytask~, this variable is set to ~$mytask~. This variable is available anywhere in the ~vpiDefine~ scope. |
-|------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-** Examples
+*** Special variables
+|---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Variable      | Description                                                                                                                                                                                                   |
+|               | <100>                                                                                                                                                                                                         |
+|---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| *userData*    | If a ~vpiDefine~ has set ~userdata: <some string>~, that string is available as this variable inside ~compiletf:~, ~calltf:~ and ~sizetf:~.                                                                   |
+| *systfHandle* | This ~VpiHandle~ variable is available inside ~compiletf:~ and ~calltf:~.                                                                                                                                |
+| *tfName*      | This string const is the task/function identifier with a ~$~ prefix. So if you have ~vpiDefine task mytask~, this variable is set to ~$mytask~. This variable is available anywhere in the ~vpiDefine~ scope. |
+|---------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+*** Examples
 See my [[https://github.com/kaushalmodi/nim-systemverilog-vpi][nim-systemverilog-vpi]] repo for example uses of ~vpiDefine~.
+* Templates
+** ~vpiException~
+Calling this template raises a ~VpiTfError~ type exception.
+
+Example usage:
+#+begin_src nim
+if argIter == nil:
+  vpiException &"{tfName} requires 1 argument; has none"
+#+end_src
 * Versions tested
 - Cadence Xcelium :: 20.09-s09
 - OS :: CentOS 7.6
