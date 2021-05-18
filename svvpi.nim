@@ -329,10 +329,10 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
       `moreNode`
 
 ## Iterators
-iterator vpiHandles2*(systfHandle: VpiHandle; typ: cint; allowNilYield = false): (VpiHandle, VpiHandle) =
+iterator vpiHandles2*(systfHandle: VpiHandle; typ: int; allowNilYield = false): (VpiHandle, VpiHandle) =
   ## Yields (handle of element pointed by iterator, iterator handle).
   let
-    iterHandle = systfHandle.vpi_iterate(typ)
+    iterHandle = systfHandle.vpi_iterate(typ.cint)
   if allowNilYield and iterHandle == nil:
     yield (nil, nil)
   while iterHandle != nil:
@@ -348,7 +348,7 @@ iterator vpiHandles2*(systfHandle: VpiHandle; typ: cint; allowNilYield = false):
     if elemHandle == nil:
       break
 
-iterator vpiHandles3*(systfHandle: VpiHandle; typ: cint; allowNilYield = false): (int, VpiHandle, VpiHandle) =
+iterator vpiHandles3*(systfHandle: VpiHandle; typ: int; allowNilYield = false): (int, VpiHandle, VpiHandle) =
   ## Yields (index, handle of element pointed by iterator, iterator handle).
   var
     index = 0
