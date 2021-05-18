@@ -352,7 +352,7 @@ iterator vpiHandles3*(systfHandle: VpiHandle; typ: cint; allowNilYield = false):
   ## Yields (index, handle of element pointed by iterator, iterator handle).
   var
     index = 0
-  for argHandle, iterHandle in systfHandle.vpiHandles2(vpiArgument, allowNilYield):
+  for argHandle, iterHandle in systfHandle.vpiHandles2(typ, allowNilYield):
     yield (index, argHandle, iterHandle)
     inc index
 
