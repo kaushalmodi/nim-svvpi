@@ -63,14 +63,14 @@ vpiDefine function hello:
   calltf:
     vpiEcho "Hello!"
 #+end_src
-** Special variables available inside the ~compiletf~, ~calltf~ and ~sizetf~
-|------------+-------------------------------------------------------------------------------------------------------------------------------------------|
-| Variable   | Description                                                                                                                               |
-|            | <100>                                                                                                                                     |
-|------------+-------------------------------------------------------------------------------------------------------------------------------------------|
-| *userData* | If a ~vpiDefine~ has set ~userdata: <some string>~, that string is available as this variable from within                                 |
-| *tfName*   | This string is the task/function identifier with a ~$~ prefix. So if you have ~vpiDefine task mytask~, this variable is set to ~$mytask~. |
-|------------+-------------------------------------------------------------------------------------------------------------------------------------------|
+** Special variables
+|------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Variable   | Description                                                                                                                                                                                                   |
+|            | <100>                                                                                                                                                                                                         |
+|------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| *userData* | If a ~vpiDefine~ has set ~userdata: <some string>~, that string is available as this variable inside ~compiletf:~, ~calltf:~ and ~sizetf:~.                                                                   |
+| *tfName*   | This string const is the task/function identifier with a ~$~ prefix. So if you have ~vpiDefine task mytask~, this variable is set to ~$mytask~. This variable is available anywhere in the ~vpiDefine~ scope. |
+|------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 ** Examples
 See my [[https://github.com/kaushalmodi/nim-systemverilog-vpi][nim-systemverilog-vpi]] repo for example uses of ~vpiDefine~.
 * Versions tested

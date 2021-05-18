@@ -242,7 +242,6 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                 proc compiletf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-                    tfName {.inject.} = `tfName`
                   `e2`
             of "calltf":
               calltfSym = ident(keyword)
@@ -250,7 +249,6 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                 proc calltf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-                    tfName {.inject.} = `tfName`
                   `e2`
             of "sizetf":
               sizetfSym = ident(keyword)
@@ -264,7 +262,6 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
                 proc sizetf(userData: cstring): cint {.cdecl.} =
                   let
                     userData {.inject.} = userData # https://forum.nim-lang.org/t/3964#24706
-                    tfName {.inject.} = `tfName`
                   `e2`
             of "functype":
               functypeNode = e2
@@ -283,6 +280,8 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
 
   result = quote do:
     proc `procSym`() =
+      const
+        tfName {.inject.} = `tfName`
       `setupNode`
       `tfProcNodes`
       var
