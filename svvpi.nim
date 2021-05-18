@@ -366,19 +366,18 @@ template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
   ## this template is called.
   for argIndex, argHandle, iterHandle in systfHandle.vpiHandles3(vpiArgument, allowNilYield = true):
     if iterHandle == nil:
-      vpiException "$# requires $# arguments, but has none" % [tfName, $numArgs]
+      if numArgs > 0:
+        vpiException "$# requires $# arguments, but has none" % [tfName, $numArgs]
     elif argHandle == nil:
       if argIndex <= numArgs - 1:
         vpiException "$# requires $# arguments, but has only $#" % [tfName, $numArgs, $argIndex]
-    else:
+    else: # Both iterHandle and argHandle are non-nil
       # echo "arg $# type = $#" % [$argIndex, $vpi_get(vpiType, argHandle)]
       if argIndex >= numArgs:
-        if argIndex == numArgs:
-          let
-            argType = vpi_get(vpiType, argHandle)
-          if argType notin {vpiOperation}: # $foo() <- The '()' is inferred as an arg of type vpiOperation
-            discard vpi_release_handle(iterHandle) # free iterator memory
-            vpiException "$# requires only $# arguments, but has more" % [tfName, $numArgs]
-        else:
-          discard vpi_release_handle(iterHandle) # free iterator memory
-          vpiException "$# requires only $# arguments, but has more" % [tfName, $numArgs]
+        if numArgs == 0 and vpi_get(vpiType, argHandle) in {vpiOperation}:
+          # For $foo() in SV, the '()' is inferred as an arg of type
+          # vpiOperation. For practical purposes, we will consider that
+          # as "no arg".
+          continue
+        discard vpi_release_handle(iterHandle) # free iterator memory
+        vpiException "$# requires only $# arguments, but has more" % [tfName, $numArgs]
