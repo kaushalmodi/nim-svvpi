@@ -153,9 +153,15 @@ type
   VpiCheckError* = object of VpiError
 
 proc vpiQuitOnException*(systfHandle: VpiHandle) =
-  let
-    lineNo = vpi_get(vpiLineNo, systfHandle)
-  vpiEcho &"ERROR: Line {lineNo}: {getCurrentExceptionMsg()}"
+  case $getCurrentException().name
+  of "VpiTfError":
+    let
+      lineNo = vpi_get(vpiLineNo, systfHandle)
+    vpiEcho &"ERROR: Line {lineNo}: {getCurrentExceptionMsg()}"
+  of "VpiCheckError":
+    vpiEcho getCurrentExceptionMsg()
+  else:
+    discard
   vpiQuit()
 
 template vpiException*(error: string) =
@@ -213,7 +219,7 @@ template createTfProc(procSym: untyped; body: untyped) =
       if systfHandle == nil:
         vpiException &"{tfName} failed to obtain systf handle"
       body
-    except VpiTfError:
+    except VpiError:
       systfHandle.vpiQuitOnException()
 
 macro vpiDefine*(exps: varargs[untyped]): untyped =
