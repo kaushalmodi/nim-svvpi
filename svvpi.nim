@@ -78,19 +78,26 @@ proc vpiQuit*(finishArg = 1) =
 proc vpi_get*(property: cint; obj: VpiHandle): cint {.exportc, dynlib.} =
   obj.nilHandleCheck("vpi_get")
   return vpi_get_1800v2009(property, obj)
+# Add swapped arg version so that we can do obj.vpi_get(property).
+proc vpi_get*(obj: VpiHandle; property: cint): cint =
+  return vpi_get(property, obj)
 
 proc vpi_get_str*(property: cint; obj: VpiHandle): cstring {.exportc, dynlib.} =
   obj.nilHandleCheck("vpi_get_str")
-  let
-    # Create a copy of the string on Nim side.
-    ret = $vpi_get_str_1800v2009(property, obj)
-  return ret.cstring
+  return $vpi_get_str_1800v2009(property, obj).cstring
+  #      ^ Create a copy of the string on Nim side.
+# Add swapped arg version so that we can do obj.vpi_get_str(property).
+proc vpi_get_str*(obj: VpiHandle; property: cint): cstring =
+  return vpi_get_str(property, obj)
 
 proc vpi_get_value*(expr: VpiHandle; value_p: p_vpi_value) =
   vpi_get_value_1800v2009(expr, value_p)
 
 proc vpi_handle*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_handle_1800v2009(typ, refHandle)
+# Add swapped arg version so that we can do refHandle.vpi_handle(typ).
+proc vpi_handle*(refHandle: VpiHandle; typ: cint): VpiHandle =
+  return vpi_handle(typ, refHandle)
 
 proc vpi_handle_multi*(typ: cint; refHandle1, refHandle2: VpiHandle): VpiHandle {.importc: "vpi_handle_multi_1800v2009",
                                                                                   cdecl, varargs.}
@@ -103,7 +110,7 @@ proc vpi_handle_by_multiIndex*(obj: VpiHandle; num_index: cint; index_array: ptr
 
 proc vpi_iterate*(typ: cint; refHandle: VpiHandle): VpiHandle {.exportc, dynlib.} =
   return vpi_iterate_1800v2009(typ, refHandle)
-# Add swapped arg version so that we can do systfHandle.vpi_iterate(vpiArgument).
+# Add swapped arg version so that we can do refHandle.vpi_iterate(typ).
 proc vpi_iterate*(refHandle: VpiHandle; typ: cint): VpiHandle =
   return vpi_iterate(typ, refHandle)
 
@@ -121,6 +128,9 @@ proc vpi_handle_by_name*(name: cstring; scope: VpiHandle): VpiHandle {.exportc, 
   if result == nil:
     vpiEcho &"Error: vpi_handleByName: Cannot find an object by name '{name}'"
     vpiQuit()
+# Add swapped arg version so that we can do scope.vpi_handle_by_name(name).
+proc vpi_handle_by_name*(scope: VpiHandle; name: cstring): VpiHandle =
+  return vpi_handle_by_name(name, scope)
 
 
 # https://forum.nim-lang.org/t/7945#50584
