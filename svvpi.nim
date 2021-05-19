@@ -148,7 +148,9 @@ template setVlogStartupRoutines*(procArray: varargs[proc() {.nimcall.}]) =
   vlog_startup_routines[numProcs] = nil
 
 type
-  VpiTfError* = object of Exception
+  VpiError* = object of Exception
+  VpiTfError* = object of VpiError
+  VpiCheckError* = object of VpiError
 
 proc vpiQuitOnException*(systfHandle: VpiHandle) =
   let
@@ -158,6 +160,43 @@ proc vpiQuitOnException*(systfHandle: VpiHandle) =
 
 template vpiException*(error: string) =
   raise newException(VpiTfError, error)
+
+proc vpiCheckError*() =
+  ## Prints an error message if the previous VPI API call resulted in an error.
+  var
+    errorInfo = t_vpi_error_info()
+  if vpi_chk_error(addr errorInfo) != 0:
+    var
+      raiseException = false
+      msg: string
+      lineInfo = ""
+    let
+      state = case errorInfo.state
+              of 1: "Compile"
+              of 2: "PLI"
+              of 3: "Run"
+              else: ""
+      severity = case errorInfo.level
+                 of 1: "N" # Notice
+                 of 2: "W" # Warning
+                 of 3:
+                   raiseException = true
+                   "E" # Error
+                 of 4:
+                   raiseException = true
+                   "F" # System
+                 of 5:
+                   raiseException = true
+                   "I" # Internal
+                 else: ""
+    if errorInfo.line != 0:
+      lineInfo = &" ({errorInfo.file}:{errorInfo.line})"
+    msg = &"{errorInfo.product} {state}: *{severity},{errorInfo.code}{lineInfo}: {errorInfo.message}"
+
+    if raiseException:
+      raise newException(VpiCheckError, msg)
+    else:
+      vpiEcho(msg)
 
 template createTfProc(procSym: untyped; body: untyped) =
   # Below proc needs to have the signature "proc (a1: cstring): cint
