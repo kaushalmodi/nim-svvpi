@@ -384,15 +384,20 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
       `moreNode`
 
 ## Iterators
-iterator vpiHandles2*(systfHandle: VpiHandle; typ: int; allowNilYield = false): (VpiHandle, VpiHandle) =
+iterator vpiHandles2*(systfHandle: VpiHandle; typ: int; allowNilYield = false; checkError = false): (VpiHandle, VpiHandle) =
   ## Yields (handle of element pointed by iterator, iterator handle).
   let
     iterHandle = systfHandle.vpi_iterate(typ.cint)
+  if checkError:
+    vpiCheckError()
+
   if allowNilYield and iterHandle == nil:
     yield (nil, nil)
   while iterHandle != nil:
     let
       elemHandle = vpi_scan(iterHandle)
+    if checkError:
+      vpiCheckError()
     if not allowNilYield and elemHandle == nil:
       # This is where the vpi_scan returns nil.
       # The iterator object is freed up automatically
@@ -403,27 +408,27 @@ iterator vpiHandles2*(systfHandle: VpiHandle; typ: int; allowNilYield = false): 
     if elemHandle == nil:
       break
 
-iterator vpiHandles2*(systfHandle: VpiHandle; types: openArray[int]; allowNilYield = false): (VpiHandle, VpiHandle) =
+iterator vpiHandles2*(systfHandle: VpiHandle; types: openArray[int]; allowNilYield = false; checkError = false): (VpiHandle, VpiHandle) =
   for typ in types:
-    for argHandle, iterHandle in systfHandle.vpiHandles2(typ, allowNilYield):
+    for argHandle, iterHandle in systfHandle.vpiHandles2(typ, allowNilYield, checkError):
       yield (argHandle, iterHandle)
 
-iterator vpiHandles3*(systfHandle: VpiHandle; typ: int; allowNilYield = false): (int, VpiHandle, VpiHandle) =
+iterator vpiHandles3*(systfHandle: VpiHandle; typ: int; allowNilYield = false; checkError = false): (int, VpiHandle, VpiHandle) =
   ## Yields (index, handle of element pointed by iterator, iterator handle).
   var
     index = 0
-  for argHandle, iterHandle in systfHandle.vpiHandles2(typ, allowNilYield):
+  for argHandle, iterHandle in systfHandle.vpiHandles2(typ, allowNilYield, checkError):
     yield (index, argHandle, iterHandle)
     inc index
 
-iterator vpiHandles3*(systfHandle: VpiHandle; types: openArray[int]; allowNilYield = false): (int, VpiHandle, VpiHandle) =
+iterator vpiHandles3*(systfHandle: VpiHandle; types: openArray[int]; allowNilYield = false; checkError = false): (int, VpiHandle, VpiHandle) =
   for typ in types:
-    for argIndex, argHandle, iterHandle in systfHandle.vpiHandles3(typ, allowNilYield):
+    for argIndex, argHandle, iterHandle in systfHandle.vpiHandles3(typ, allowNilYield, checkError):
       yield (argIndex, argHandle, iterHandle)
 
-iterator vpiArgs*(systfHandle: VpiHandle; allowNilYield = false): (int, VpiHandle) =
+iterator vpiArgs*(systfHandle: VpiHandle; allowNilYield = false; checkError = false): (int, VpiHandle) =
   ## Yields (argument index, argument handle).
-  for argIndex, argHandle, _ in systfHandle.vpiHandles3(vpiArgument, allowNilYield):
+  for argIndex, argHandle, _ in systfHandle.vpiHandles3(vpiArgument, allowNilYield, checkError):
     yield (argIndex, argHandle)
 
 template vpiNumArgCheck*(systfHandle: VpiHandle; numArgRange: Slice[int]) =
