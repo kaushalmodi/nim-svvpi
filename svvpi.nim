@@ -371,20 +371,27 @@ iterator vpiArgs*(systfHandle: VpiHandle; allowNilYield = false): (int, VpiHandl
   for argIndex, argHandle, _ in systfHandle.vpiHandles3(vpiArgument, allowNilYield):
     yield (argIndex, argHandle)
 
-template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
+template vpiNumArgCheck*(systfHandle: VpiHandle; numArgRange: Slice[int]) =
   ## tfName, a string variable needs to be declared in the scope where
   ## this template is called.
+  let
+    minNumArgs = min(numArgRange.a, numArgRange.b)
+    maxNumArgs = max(numArgRange.a, numArgRange.b)
+    reqArgsStr = if numArgRange.a == numArgRange.b:
+                   $numArgRange.a
+                 else:
+                   "$# to $#" % [$minNumArgs, $maxNumArgs]
   for argIndex, argHandle, iterHandle in systfHandle.vpiHandles3(vpiArgument, allowNilYield = true):
-    if iterHandle == nil:
-      if numArgs > 0:
-        vpiException "$# requires $# arguments, but has none" % [tfName, $numArgs]
-    elif argHandle == nil:
-      if argIndex <= numArgs - 1:
-        vpiException "$# requires $# arguments, but has only $#" % [tfName, $numArgs, $argIndex]
+    if iterHandle == nil: # This is happen only when argIndex == 0
+      if 0 notin numArgRange:
+        vpiException "$# requires $# arguments, but has none" % [tfName, reqArgsStr]
+    elif argHandle == nil: # iterHandle is non-nil
+      if argIndex notin numArgRange:
+        vpiException "$# requires $# arguments, but has only $#" % [tfName, reqArgsStr, $argIndex]
     else: # Both iterHandle and argHandle are non-nil
       # echo "arg $# type = $#" % [$argIndex, $vpi_get(vpiType, argHandle)]
-      if argIndex >= numArgs:
-        if numArgs == 0 and
+      if argIndex >= maxNumArgs:
+        if maxNumArgs == 0 and
            vpi_get(vpiType, argHandle) in {vpiOperation} and
            vpi_get(vpiOpType, argHandle) in {vpiNullOp}:
           # For $foo() in SV, the '()' is inferred as an arg of type
@@ -392,4 +399,7 @@ template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
           # consider that as "no arg".
           continue
         discard vpi_release_handle(iterHandle) # free iterator memory
-        vpiException "$# requires only $# arguments, but has more" % [tfName, $numArgs]
+        vpiException "$# requires $# arguments, but more (at least $#) were detected" % [tfName, reqArgsStr, $(argIndex+1)]
+
+template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
+  vpiNumArgCheck(systfHandle, numArgs .. numArgs)
