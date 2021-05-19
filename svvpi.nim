@@ -310,7 +310,7 @@ macro vpiDefine*(exps: varargs[untyped]): untyped =
       echo ""
 
   result = quote do:
-    proc `procSym`() =
+    proc `procSym`*() =
       const
         tfName {.inject.} = `tfName`
       `setupNode`
