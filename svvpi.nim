@@ -56,6 +56,27 @@ cOverride:
 #   With --noHeader, types will be pure Nim and procs will be just {.importc.}.
 cImport(cSearchPath("sv_vpi_user.h"), recurse = true, flags = "--noHeader -f:ast2")
 
+# The IEEE 1800-2017 standard does not make it clear on what the
+# return value of a callback routine should be in the event of success
+# vs failure. The only reference I have is an example from Section
+# 38.31 vpi_put_data() of the standard.
+#
+#     PLI_INT32 consumer_restart(p_cb_data data)
+#     {
+#       // ..
+#       if (cnt != vpi_get_data(id, (PLI_BYTE8 *)firstWrk,cnt))
+#         return(1); /* error */
+#
+#       // ..
+#       wrk->next = NULL;
+#       return(0); /* SUCCESS */
+#     }
+#
+# So I am taking this into my own hands to make it clear and consistent.
+const
+  vpiCbSuccess* = QuitSuccess.cint # 0
+  vpiCbFailure* = QuitFailure.cint # 1
+
 # cImport(cSearchPath("veriuser.h"), recurse = true, flags = "--noHeader -f:ast2") # Mainly for tf_dofinish
 proc tf_dofinish*(): cint {.importc, cdecl.}
 
