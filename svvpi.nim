@@ -1,5 +1,11 @@
 import std/[os, macros, strutils, strformat, sequtils]
-import nimterop/cimport
+import nimterop/[globals, cimport]
+
+static:
+  # Reset old state of searchDirs, symOverride, etc. saved in gStateCT
+  # by nimterop. These cause an issue if svdpi is imported before
+  # svvpi.
+  gStateCT = new(State)
 
 when defined(svGenWrapper):
   static:
