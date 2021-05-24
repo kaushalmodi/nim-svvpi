@@ -3,14 +3,14 @@
 
 * Installation
 #+begin_example
-nimble install https://github.com/kaushalmodi/nim-svvpi
+nimble install svvpi
 #+end_example
 ** How to get ~nimble~?
 Get Nim installation (which includes ~nimble~) from
 https://nim-lang.org/install.html.
 
 * Requirements
-User needs to have access to some SystemVerilog simulator supporting
+User needs to have access to some Verilog/SystemVerilog simulator supporting
 VPI, like Cadence Xcelium.
 
 * Macros
