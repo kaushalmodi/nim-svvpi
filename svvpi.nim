@@ -94,12 +94,23 @@ template nilHandleCheck*(handle: VpiHandle; str: string) =
 proc vpi_compare_objects*(object1: VpiHandle; object2: VpiHandle): cint =
   return vpi_compare_objects_1800v2009(object1, object2)
 
-proc vpi_control*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl, varargs.}
+# proc vpi_control*(operation: cint): cint {.importc: "vpi_control_1800v2009", cdecl, varargs.}
+# https://gitter.im/nim-lang/Nim?at=60ac6967688a2624b8adbdf7
+macro unpackVarargs2(callee: untyped; convertproc: untyped; args: varargs[untyped]): untyped =
+  result = newCall(callee)
+  for arg in args:
+    result.add newCall(convertproc, arg)
+  # echo result.treeRepr
+
+proc vpiControlArgConvert(inp: int): cint =
+  return inp.cint # This is just a placeholder proc for now
+template vpi_control*(operation: varargs[typed]): untyped =
+  discard unpackVarargs2(vpi_control_1800v2009, vpiControlArgConvert, operation)
 
 proc vpiQuit*(finishArg = 1) =
   # FIXME: -- Mon May 10 02:17:38 EDT 2021 - kmodi
   # vpi_control doesn't seem to work
-  # discard vpi_control(vpiFinish, finishArg)
+  # vpi_control(vpiFinish, finishArg)
   discard tf_dofinish()
 
 proc vpi_get*(property: cint; obj: VpiHandle): cint {.exportc, dynlib.} =
