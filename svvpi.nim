@@ -463,6 +463,15 @@ iterator vpiArgs*(systfHandle: VpiHandle; allowNilYield = false; checkError = fa
   for argIndex, argHandle, _ in systfHandle.vpiHandles3(vpiArgument, allowNilYield, checkError):
     yield (argIndex, argHandle)
 
+proc vpiIsFirstArgNullOp*(argHandle: VpiHandle; maxNumArgs: int): bool =
+  if maxNumArgs == 0 and
+     vpi_get(vpiType, argHandle) in {vpiOperation} and
+     vpi_get(vpiOpType, argHandle) in {vpiNullOp}:
+    # For $foo() in SV, the '()' is inferred as an arg of type
+    # vpiOperation->vpiNullOp. For practical purposes, we will
+    # consider that as "no arg".
+    return true
+
 template vpiNumArgCheck*(systfHandle: VpiHandle; numArgRange: Slice[int]) =
   ## tfName, a string variable needs to be declared in the scope where
   ## this template is called.
@@ -483,14 +492,9 @@ template vpiNumArgCheck*(systfHandle: VpiHandle; numArgRange: Slice[int]) =
     else: # Both iterHandle and argHandle are non-nil
       # echo "arg $# type = $#" % [$argIndex, $vpi_get(vpiType, argHandle)]
       if argIndex >= maxNumArgs:
-        if maxNumArgs == 0 and
-           vpi_get(vpiType, argHandle) in {vpiOperation} and
-           vpi_get(vpiOpType, argHandle) in {vpiNullOp}:
-          # For $foo() in SV, the '()' is inferred as an arg of type
-          # vpiOperation->vpiNullOp. For practical purposes, we will
-          # consider that as "no arg".
-          continue
         discard vpi_release_handle(iterHandle) # free iterator memory
+        if argHandle.vpiIsFirstArgNullOp(maxNumArgs):
+          break
         vpiException "Requires $# arguments, but more (at least $#) were detected" % [reqArgsStr, $(argIndex+1)]
 
 template vpiNumArgCheck*(systfHandle: VpiHandle; numArgs: int) =
